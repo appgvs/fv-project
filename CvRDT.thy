@@ -6,7 +6,7 @@ class cvrdt =
   fixes
     merge :: "'a \<Rightarrow> 'a \<Rightarrow> 'a"
 
-  assumes associativity: "merge (merge a b) c = merge (merge a b) c"
+  assumes associativity: "merge (merge a b) c = merge a (merge b c)"
       and commutativity: "merge a b = merge b a"
       and idempotency: "merge a a = a"
 
@@ -20,7 +20,11 @@ instance proof
     using "merge-int" by auto
   then show "merge a a = a"
     using "merge-int" by auto
-  then show "merge (merge a b) c = merge (merge a b) c"
-    by auto
-qed  
+  then show "merge (merge a b) c = merge a (merge b c)"
+    by (simp add: "merge-int")
+qed
+
+export_code "merge" in Scala
+  module_name "CvRDT"
+
 end
