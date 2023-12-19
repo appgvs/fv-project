@@ -52,16 +52,16 @@ instance proof
 qed
 end
 
-datatype 'a GSet = GSet "'a set"
-fun insert :: "'a => 'a GSet => 'a GSet" where
-  "insert e (GSet s) = GSet (s \<union> {e})"
-instantiation GSet :: (cvrdt) cvrdt
+datatype 'a USet = USet "'a set"
+fun add :: "'a => 'a USet => 'a USet" where
+  "add e (USet s) = USet (s \<union> {e})"
+fun elements :: "'a USet => 'a set" where
+  "elements (USet s) = s"
+instantiation USet :: (cvrdt) cvrdt
 begin
-fun elements :: "'a GSet => 'a set" where
-  "elements (GSet s) = s"
-definition "merge-gset" : "merge a b = GSet ((elements a) \<union> (elements b))"
+definition "merge-gset" : "merge a b = USet ((elements a) \<union> (elements b))"
 instance proof
-  fix a b c :: "'a GSet"
+  fix a b c :: "'a USet"
   show "merge a b = merge b a"
     using "merge-gset" by auto
   thus "merge a a = a"
@@ -71,7 +71,7 @@ instance proof
 qed
 end
 
-export_code "merge" "GSet" "insert" in Scala
+export_code "merge" "USet" "add" in Scala 
   module_name "CvRDT"
 
 end
