@@ -38,19 +38,27 @@ interpretation PNSetCvRDT : CvRDT
     PNSet.update
 proof
     show "\<And>x. PNSet.subset_eq x x"
-    show "\<And>x y. PNSet.subset x y = (PNSet.subset_eq x y \<and> \<not> PNSet.subset_eq y x)"
+      using subset_eq.elims(3) by fastforce
+(*    show "\<And>x y. PNSet.subset x y = (PNSet.subset_eq x y \<and> \<not> PNSet.subset_eq y x)"*)
+
     show "\<And>x y z.
        PNSet.subset_eq x y \<Longrightarrow>
        PNSet.subset_eq y z \<Longrightarrow> PNSet.subset_eq x z"
+      by (smt (verit, best) PNSet.inject subset_eq.elims(1) subset_trans)
     show "\<And>x y. PNSet.subset_eq x y \<Longrightarrow>
            PNSet.subset_eq y x \<Longrightarrow> x = y"
+      using subset_eq.elims(2) by fastforce
     show "\<And>x y. PNSet.subset_eq x (PNSet.union x y)"
+      by (smt (verit, del_insts) PNSet.inject UnCI subsetI subset_eq.elims(3) union.elims)
     show "\<And>y x. PNSet.subset_eq y (PNSet.union x y)"
+      by (smt (verit, del_insts) PNSet.inject UnCI \<open>\<And>y x. PNSet.subset_eq x (PNSet.union x y)\<close> subsetI subset_eq.elims(2) subset_eq.elims(3) union.simps)
     show "\<And>y x z.
        PNSet.subset_eq y x \<Longrightarrow>
        PNSet.subset_eq z x \<Longrightarrow>
        PNSet.subset_eq (PNSet.union y z) x"
-    show "\<And>a u. PNSet.subset_eq a (add a u)"
+      by (smt (verit, del_insts) PNSet.inject Un_subset_iff subset_eq.elims(2) subset_eq.elims(3) union.simps)
+    show "\<And>a u. PNSet.subset_eq a (update a u)"
+      by (metis PNSet.exhaust PNSetUpdate.exhaust \<open>\<And>x. PNSet.subset_eq x x\<close> le_sup_iff subset_eq.simps update.simps(1) update.simps(2))
 qed
 
 end
