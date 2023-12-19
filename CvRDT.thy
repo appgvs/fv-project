@@ -10,11 +10,11 @@ locale CvRDT = "'a" : Orderings.order + Lattices.semilattice_sup +
 begin
     fun merge :: "'a => 'a => 'a" where "merge a b = sup a b"
     lemma associativity: "merge a (merge b c) = merge (merge a b) c"
-      sorry
+      by (simp add: local.sup.assoc)
     lemma commutativity: "merge a b = merge b a"
-      sorry
+      by (simp add: local.sup.commute)
     lemma idempotency: "merge a a = a"
-      sorry
+      by simp
 end
 
 end
