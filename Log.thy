@@ -55,9 +55,9 @@ proof
            Log.subset_eq y x \<Longrightarrow> x = y"
     using subset_eq.elims(2) by fastforce
   show "\<And>x y. Log.subset_eq x (Log.union x y)"
-    by (metis Log.exhaust Un_commute inf_sup_ord(4) subset_eq.simps union.simps)
+    by (smt (verit, del_insts) Log.inject UnCI subsetI subset_eq.elims(3) union.elims)
   show  "\<And>y x. Log.subset_eq y (Log.union x y)"
-      by (smt (verit, del_insts) Log.inject UnCI \<open>\<And>y x. Log.subset_eq x (Log.union x y)\<close> subsetI subset_eq.elims(2) subset_eq.elims(3) union.simps)
+    by (smt (verit, del_insts) Log.inject UnCI \<open>\<And>y x. Log.subset_eq x (Log.union x y)\<close> subsetI subset_eq.elims(2) subset_eq.elims(3) union.simps)
   show "\<And>y x z.  
        Log.subset_eq y x \<Longrightarrow>
        Log.subset_eq z x \<Longrightarrow>
