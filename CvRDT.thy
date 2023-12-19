@@ -78,6 +78,11 @@ fun pnset_value :: "'a PNSet => 'a set" where
   "pnset_value (PNSet a r) = a - r"
 instantiation PNSet :: (type) cvrdt
 begin
+fun pnset_a :: "'a PNSet => 'a set" where
+  "pnset_a (PNSet a _) = a"
+fun pnset_r :: "'a PNSet => 'a set" where
+  "pnset_r (PNSet _ r) = r"
+definition "merge-pnset" : "merge a b = PNSet () ()"
 end
 
 export_code
