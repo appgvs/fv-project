@@ -38,7 +38,7 @@ instance proof
 qed
 end
 
-instantiation set :: (cvrdt) cvrdt
+instantiation set :: (type) cvrdt
 begin
 definition "merge-set" : "merge a b = a \<union> b"
 instance proof
@@ -53,25 +53,37 @@ qed
 end
 
 datatype 'a USet = USet "'a set"
-fun add :: "'a => 'a USet => 'a USet" where
-  "add e (USet s) = USet (s \<union> {e})"
-fun elements :: "'a USet => 'a set" where
-  "elements (USet s) = s"
-instantiation USet :: (cvrdt) cvrdt
+fun uset_add :: "'a => 'a USet => 'a USet" where
+  "uset_add e (USet s) = USet (s \<union> {e})"
+fun uset_value :: "'a USet => 'a set" where
+  "uset_value (USet s) = s"
+instantiation USet :: (type) cvrdt
 begin
-definition "merge-gset" : "merge a b = USet ((elements a) \<union> (elements b))"
+definition "merge-gset" : "merge a b = USet ((uset_value a) \<union> (uset_value b))"
 instance proof
   fix a b c :: "'a USet"
   show "merge a b = merge b a"
     using "merge-gset" by auto
   thus "merge a a = a"
-    by (metis "merge-gset" elements.elims sup.idem)
+    by (metis "merge-gset" uset_value.elims sup.idem)
   thus "merge (merge a b) c = merge a (merge b c)"
     using "merge-gset" by auto
 qed
 end
 
-export_code "merge" "USet" "add" in Scala 
+datatype 'a PNSet = PNSet "'a set" "'a set"
+fun pnset_add :: "'a => 'a PNSet => 'a PNSet" where
+  "pnset_add e (PNSet a r) = PNSet (a \<union> {e}) r"
+fun pnset_value :: "'a PNSet => 'a set" where
+  "pnset_value (PNSet a r) = a - r"
+instantiation PNSet :: (type) cvrdt
+begin
+end
+
+export_code
+  "merge"
+  "USet" "uset_add" "uset_value"
+in Scala 
   module_name "CvRDT"
 
 end
