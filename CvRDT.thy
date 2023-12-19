@@ -12,9 +12,7 @@ class cvrdt =
 
 instantiation int :: cvrdt
 begin
-
 definition "merge-int" : "merge a b = (if (a::int) > (b::int) then a else b)"
-
 instance proof
   fix a b c :: int
   show "merge a b = merge b a"
@@ -28,9 +26,7 @@ end
 
 instantiation prod :: (cvrdt, cvrdt) cvrdt
 begin
-
 definition "merge-prod" : "merge a b = (merge (fst a) (fst b), merge (snd a) (snd b))"
-
 instance proof
   fix a b c :: "'a :: cvrdt \<times> 'b :: cvrdt"
   show "merge a b = merge b a"
@@ -44,9 +40,7 @@ end
 
 instantiation set :: (cvrdt) cvrdt
 begin
-
 definition "merge-set" : "merge a b = a \<union> b"
-
 instance proof
   fix a b c :: "'a set"
   show "merge a b = merge b a"
@@ -56,7 +50,6 @@ instance proof
   thus "merge (merge a b) c = merge a (merge b c)"
     using "merge-set" by auto
 qed
-
 end
 
 export_code "merge" in Scala
