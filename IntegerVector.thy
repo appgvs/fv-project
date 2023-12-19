@@ -16,17 +16,17 @@ fun update :: "IntegerVector => Update => IntegerVector" where
   "update (x#xs) 0 = (x+1)#xs" |
   "update (x#xs) n = x#(update xs (n-1))"
 
-fun less :: "IntegerVector \<Rightarrow> IntegerVector \<Rightarrow> bool" where
-  "less [] [] = True" |
-  "less [] _  = True" | (* TODO: How to handle comp with empty list *) 
-  "less _ []  = False" |
-  "less (x#xs) (y#ys) = ((x < y) & less xs ys)"
-
 fun less_eq :: "IntegerVector \<Rightarrow> IntegerVector \<Rightarrow> bool" where
-  "less_eq [] [] = True" |
-  "less_eq [] _  = True" | (* TODO: How to handle comp with empty list *) 
-  "less_eq _ []  = False" |
+  "less_eq [] _ = True" |
+  "less_eq (0#xs) [] = less_eq xs []" |
+  "less_eq (x#xs) [] = False" |
   "less_eq (x#xs) (y#ys) = ((x \<le> y) & less_eq xs ys)"
+
+fun less :: "IntegerVector \<Rightarrow> IntegerVector \<Rightarrow> bool" where
+  "less _ []  = False" |
+  "less [] (0#ys) = less [] ys" |
+  "less [] (y#ys) = True" | 
+  "less (x#xs) (y#ys) = (((x = y) & less xs ys) | ((x < y) & less_eq xs ys))"
 
 fun max :: "IntegerVector \<Rightarrow> IntegerVector \<Rightarrow> IntegerVector" where
   "max [] xs = xs" |
