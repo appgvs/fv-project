@@ -24,6 +24,23 @@ instance proof
   thus "merge (merge a b) c = merge a (merge b c)"
     by (simp add: "merge-int")
 qed
+end
+
+instantiation prod :: (cvrdt, cvrdt) cvrdt
+begin
+
+definition "merge-prod" : "merge a b = (merge (fst a) (fst b), merge (snd a) (snd b))"
+
+instance proof
+  fix a b c :: "'a :: cvrdt \<times> 'b :: cvrdt"
+  show "merge a b = merge b a"
+    by (simp add: "merge-prod" commutativity)
+  thus "merge a a = a"
+    by (simp add: "merge-prod" idempotency)
+  thus "merge (merge a b) c = merge a (merge b c)"
+    by (simp add: "merge-prod" associativity)
+qed
+end
 
 export_code "merge" in Scala
   module_name "CvRDT"
