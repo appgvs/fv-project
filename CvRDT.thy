@@ -61,8 +61,12 @@ definition "merge-gset" : "merge a b = GSet ((elements a) \<union> (elements b))
 instance proof
   fix a b c :: "'a GSet"
   show "merge a b = merge b a"
+    using "merge-gset" by auto
   thus "merge a a = a"
+    by (metis "merge-gset" elements.elims sup.idem)
   thus "merge (merge a b) c = merge a (merge b c)"
+    using "merge-gset" by auto
+qed
 end
 
 export_code "merge" in Scala
