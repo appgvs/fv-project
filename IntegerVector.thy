@@ -27,6 +27,15 @@ lemma less_eq_self : "less_eq x x"
   apply (auto)
   done
 
+lemma update_monotonic_induct : "less_eq a2 (update a2 u) \<Longrightarrow> less_eq (a1 # a2) (update (a1 # a2) u)"
+  sorry
+
+lemma update_monotonic : "less_eq a (update a u)"
+  apply (induct a)
+  apply (auto)
+  by (simp add: update_monotonic_induct)
+
+
 fun less :: "IntegerVector \<Rightarrow> IntegerVector \<Rightarrow> bool" where
   "less _ []  = False" |
   "less [] (0#ys) = less [] ys" |
