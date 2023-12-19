@@ -24,7 +24,10 @@ fun subset_eq :: "'a PNSet => 'a PNSet => bool" where
     "subset_eq (PNSet a1 r1) (PNSet a2 r2) = (Set.subset_eq a1 a2 & Set.subset_eq r1 r2)"
 
 fun subset :: "'a PNSet => 'a PNSet => bool" where
-    "subset (PNSet a1 r1) (PNSet a2 r2) = (Set.subset a1 a2 & Set.subset r1 r2)"
+    "subset (PNSet a1 r1) (PNSet a2 r2) = (
+        (Set.subset a1 a2 & Set.subset_eq r1 r2) |
+        (Set.subset_eq a1 a2 & Set.subset r1 r2)
+    )"
 
 fun union :: "'a PNSet => 'a PNSet => 'a PNSet" where
     "union (PNSet a1 r1) (PNSet a2 r2) = PNSet (Set.union a1 a2) (Set.union r1 r2)"
