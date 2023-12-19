@@ -91,8 +91,11 @@ definition "merge-pnset" : "merge a b = PNSet (
 instance proof
   fix a b c :: "'a PNSet"
   show "merge a b = merge b a"
+    using "merge-pnset" by auto
   thus "merge a a = a"
+    by (metis "merge-pnset" "merge-prod" "merge-set" idempotency pnset_a.elims pnset_r.simps)
   thus "merge (merge a b) c = merge a (merge b c)"
+    using "merge-pnset" by auto
 qed
 end
 
