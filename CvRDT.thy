@@ -14,13 +14,14 @@ instantiation int :: cvrdt
 begin
 
 definition "merge-int" : "merge a b = (if (a::int) > (b::int) then a else b)"
+
 instance proof
   fix a b c :: int
   show "merge a b = merge b a"
     using "merge-int" by auto
-  then show "merge a a = a"
+  thus "merge a a = a"
     using "merge-int" by auto
-  then show "merge (merge a b) c = merge a (merge b c)"
+  thus "merge (merge a b) c = merge a (merge b c)"
     by (simp add: "merge-int")
 qed
 
