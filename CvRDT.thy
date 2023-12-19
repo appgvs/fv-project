@@ -71,18 +71,29 @@ instance proof
 qed
 end
 
-datatype 'a PNSet = PNSet "'a set" "'a set"
+datatype 'a PNSet = PNSet "'a set \<times> 'a set"
 fun pnset_add :: "'a => 'a PNSet => 'a PNSet" where
-  "pnset_add e (PNSet a r) = PNSet (a \<union> {e}) r"
+  "pnset_add e (PNSet (a, r)) = PNSet (a \<union> {e}, r)"
+fun pnset_remove :: "'a => 'a PNSet => 'a PNSet" where
+  "pnset_remove e (PNSet (a, r)) = PNSet (a \<union> {e}, r \<union> {e})"
 fun pnset_value :: "'a PNSet => 'a set" where
-  "pnset_value (PNSet a r) = a - r"
+  "pnset_value (PNSet (a,r)) = a - r"
 instantiation PNSet :: (type) cvrdt
 begin
 fun pnset_a :: "'a PNSet => 'a set" where
-  "pnset_a (PNSet a _) = a"
+  "pnset_a (PNSet p) = fst p"
 fun pnset_r :: "'a PNSet => 'a set" where
-  "pnset_r (PNSet _ r) = r"
-definition "merge-pnset" : "merge a b = PNSet () ()"
+  "pnset_r (PNSet p) = snd p"
+definition "merge-pnset" : "merge a b = PNSet (
+    pnset_a a \<union> pnset_a b,
+    pnset_r a \<union> pnset_r b
+  )"
+instance proof
+  fix a b c :: "'a PNSet"
+  show "merge a b = merge b a"
+  thus "merge a a = a"
+  thus "merge (merge a b) c = merge a (merge b c)"
+qed
 end
 
 export_code
