@@ -33,6 +33,10 @@ fun less :: "IntegerVector \<Rightarrow> IntegerVector \<Rightarrow> bool" where
   "less [] (y#ys) = True" | 
   "less (x#xs) (y#ys) = (((x = y) & less xs ys) | ((x < y) & less_eq xs ys))"
 
+lemma less_comb  : "less x y = (less_eq x y & (~less_eq y x))"
+  apply (induction x arbitrary: y)
+  by auto
+
 fun max :: "IntegerVector \<Rightarrow> IntegerVector \<Rightarrow> IntegerVector" where
   "max [] xs = xs" |
   "max xs [] = xs" |
@@ -49,7 +53,7 @@ proof
     show "\<And>x. IntegerVector.less_eq x x"
       by (simp add: less_eq_self)
     show "\<And>x y. IntegerVector.less x y = (IntegerVector.less_eq x y \<and> \<not> IntegerVector.less_eq y x)"
-      sorry
+      by (simp add: less_comb)
     show "\<And>x y z.
        IntegerVector.less_eq x y \<Longrightarrow>
        IntegerVector.less_eq y z \<Longrightarrow> IntegerVector.less_eq x z"
