@@ -6,6 +6,5 @@ export_code
   "USet" "USet.initial" "USet.add" "USet.elements"
   "PNSet" "PNSet.initial" "PNSet.add" "PNSet.remove" "PNSet.elements"
 in Scala
-module_name "USet"
 
 end

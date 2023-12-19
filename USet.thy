@@ -12,7 +12,7 @@ fun add :: "'a USet => 'a => 'a USet" where
 fun elements :: "'a USet => 'a set" where
   "elements (USet s) = s"
 
-fun "subset_eq" :: "'a USet => 'a USet => bool" where
+fun subset_eq :: "'a USet => 'a USet => bool" where
     "subset_eq (USet s1) (USet s2) = Set.subset_eq s1 s2"
 
 fun subset :: "'a USet => 'a USet => bool" where
