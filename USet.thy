@@ -15,9 +15,6 @@ fun elements :: "'a USet => 'a set" where
 fun identity :: "'a => 'a" where
     "identity x = x"
 
-fun add_to_set :: "'a set => 'a => 'a set" where
-    "add_to_set all e = all \<union> {e}"
-
 fun subset_eq :: "'a USet => 'a USet => bool" where
     "subset_eq (USet s1) (USet s2) = Set.subset_eq s1 s2"
 
@@ -59,5 +56,8 @@ proof
   show "\<And>a u. USet.subset_eq a (add a u)"
     using subset_eq.elims(3) by fastforce
 qed
+
+export_code "USet" "initial" "add" "elements" in Scala
+module_name "USet"
 
 end
