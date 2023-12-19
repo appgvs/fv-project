@@ -12,9 +12,6 @@ fun add :: "'a USet => 'a => 'a USet" where
 fun elements :: "'a USet => 'a set" where
   "elements (USet s) = s"
 
-fun identity :: "'a => 'a" where
-    "identity x = x"
-
 fun subset_eq :: "'a USet => 'a USet => bool" where
     "subset_eq (USet s1) (USet s2) = Set.subset_eq s1 s2"
 
@@ -25,7 +22,7 @@ fun union :: "'a USet => 'a USet => 'a USet" where
     "union (USet s1) (USet s2) = USet (Set.union s1 s2)"
 
 
-interpretation uset_cvrdt : CvRDT
+interpretation USetCvRDT : CvRDT
     USet.subset_eq
     USet.subset
     USet.union
