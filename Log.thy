@@ -46,27 +46,27 @@ interpretation LogCvRDT : CvRDT
   Log.update
 proof
   show "\<And>x. Log.subset_eq x x"
-    using subset_eq.elims(3) by fastforce
+    using subset_eq.elims(3) by auto
   show "\<And>x y. Log.subset x y = (Log.subset_eq x y \<and> \<not> Log.subset_eq y x)"
     by (metis elements.elims psubsetE psubsetI subset.simps subset_eq.simps)
   show "\<And>x y z.
        Log.subset_eq x y \<Longrightarrow>
        Log.subset_eq y z \<Longrightarrow> Log.subset_eq x z"
-    by (metis Log.inject subset_eq subset_eq.elims(2) subset_eq.elims(3))
+    by (metis elements.cases elements.simps order_trans subset_eq.elims(2) subset_eq.elims(3))
   show "\<And>x y. Log.subset_eq x y \<Longrightarrow>
            Log.subset_eq y x \<Longrightarrow> x = y"
     using subset_eq.elims(2) by fastforce
   show "\<And>x y. Log.subset_eq x (Log.union x y)"
-    by (smt (verit, del_insts) Log.inject UnCI subsetI subset_eq.elims(3) union.elims)
+    by (metis Un_subset_iff elements.simps order_refl subset_eq.simps union.elims)
   show  "\<And>y x. Log.subset_eq y (Log.union x y)"
-    by (smt (verit, del_insts) Log.inject UnCI \<open>\<And>y x. Log.subset_eq x (Log.union x y)\<close> subsetI subset_eq.elims(2) subset_eq.elims(3) union.simps)
+    by (metis \<open>\<And>y x. Log.subset_eq x (Log.union x y)\<close> elements.simps sup_commute union.elims)
   show "\<And>y x z.  
        Log.subset_eq y x \<Longrightarrow>
        Log.subset_eq z x \<Longrightarrow>
        Log.subset_eq (Log.union y z) x"
-    by (smt (verit, ccfv_threshold) elements.simps le_sup_iff subset_eq.elims(2) subset_eq.elims(3) union.elims)  
+    by (metis Log.exhaust subset_eq.simps sup.absorb_iff2 sup_assoc union.simps)
   show "\<And>a u. Log.subset_eq a (update a u)"
-    using subset_eq.elims(3) by fastforce
+    by (metis NewEvent.exhaust \<open>\<And>y x. Log.subset_eq x (Log.union x y)\<close> elements.simps union.elims update.simps)
 qed
   
 end
