@@ -42,8 +42,8 @@ interpretation PNSetCvRDT : CvRDT
 proof
     show "\<And>x. PNSet.subset_eq x x"
       using subset_eq.elims(3) by fastforce
-(*    show "\<And>x y. PNSet.subset x y = (PNSet.subset_eq x y \<and> \<not> PNSet.subset_eq y x)"*)
-
+    show "\<And>x y. PNSet.subset x y = (PNSet.subset_eq x y \<and> \<not> PNSet.subset_eq y x)"
+      by (smt (z3) order.preordering_axioms preordering.strict_iff_not subset.elims(1) subset_eq.simps)
     show "\<And>x y z.
        PNSet.subset_eq x y \<Longrightarrow>
        PNSet.subset_eq y z \<Longrightarrow> PNSet.subset_eq x z"
