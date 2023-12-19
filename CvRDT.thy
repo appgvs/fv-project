@@ -83,6 +83,7 @@ end
 export_code
   "merge"
   "USet" "uset_add" "uset_value"
+  "PNSet" "pnset_add" "pnset_value"
 in Scala 
   module_name "CvRDT"
 
