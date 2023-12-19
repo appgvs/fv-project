@@ -22,6 +22,11 @@ fun less_eq :: "IntegerVector \<Rightarrow> IntegerVector \<Rightarrow> bool" wh
   "less_eq (x#xs) [] = False" |
   "less_eq (x#xs) (y#ys) = ((x \<le> y) & less_eq xs ys)"
 
+lemma less_eq_self : "less_eq x x"
+  apply (induct x)
+  apply (auto)
+  done
+
 fun less :: "IntegerVector \<Rightarrow> IntegerVector \<Rightarrow> bool" where
   "less _ []  = False" |
   "less [] (0#ys) = less [] ys" |
@@ -42,21 +47,27 @@ interpretation IntVectorCvRDT : CvRDT
   IntegerVector.update
 proof
     show "\<And>x. IntegerVector.less_eq x x"
+      by (simp add: less_eq_self)
     show "\<And>x y. IntegerVector.less x y = (IntegerVector.less_eq x y \<and> \<not> IntegerVector.less_eq y x)"
+      sorry
     show "\<And>x y z.
        IntegerVector.less_eq x y \<Longrightarrow>
        IntegerVector.less_eq y z \<Longrightarrow> IntegerVector.less_eq x z"
+      sorry
     show "\<And>x y. IntegerVector.less_eq x y \<Longrightarrow>
            IntegerVector.less_eq y x \<Longrightarrow> x = y"
+      sorry
     show "\<And>x y. IntegerVector.less_eq x (IntegerVector.max x y)"
+      sorry
     show "\<And>y x. IntegerVector.less_eq y (IntegerVector.max x y)"
+      sorry
     show "\<And>y x z.
        IntegerVector.less_eq y x \<Longrightarrow>
        IntegerVector.less_eq z x \<Longrightarrow>
        IntegerVector.less_eq (IntegerVector.max y z) x"
+      sorry
     show "\<And>a u. IntegerVector.less_eq a (update a u)"
+      sorry
 qed
   
-
-
 end
