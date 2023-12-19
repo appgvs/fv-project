@@ -50,8 +50,11 @@ definition "merge-set" : "merge a b = a \<union> b"
 instance proof
   fix a b c :: "'a set"
   show "merge a b = merge b a"
+    by (simp add: "merge-set" sup_commute)
   thus "merge a a = a"
+    by (simp add: "merge-set")
   thus "merge (merge a b) c = merge a (merge b c)"
+    using "merge-set" by auto
 qed
 
 end
