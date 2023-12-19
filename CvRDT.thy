@@ -9,6 +9,12 @@ locale CvRDT = "'a" : Orderings.order + Lattices.semilattice_sup +
   assumes monotonicity : "less_eq a (update a u)"
 begin
     fun merge :: "'a => 'a => 'a" where "merge a b = sup a b"
+    lemma associativity: "merge a (merge b c) = merge (merge a b) c"
+      sorry
+    lemma commutativity: "merge a b = merge b a"
+      sorry
+    lemma idempotency: "merge a a = a"
+      sorry
 end
 
 end
