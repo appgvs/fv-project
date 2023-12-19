@@ -53,6 +53,8 @@ qed
 end
 
 datatype 'a GSet = GSet "'a set"
+fun insert :: "'a => 'a GSet => 'a GSet" where
+  "insert e (GSet s) = GSet (s \<union> {e})"
 instantiation GSet :: (cvrdt) cvrdt
 begin
 fun elements :: "'a GSet => 'a set" where
@@ -69,7 +71,7 @@ instance proof
 qed
 end
 
-export_code "merge" in Scala
+export_code "merge" "GSet" "insert" in Scala
   module_name "CvRDT"
 
 end
