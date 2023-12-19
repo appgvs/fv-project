@@ -42,6 +42,20 @@ instance proof
 qed
 end
 
+instantiation set :: (cvrdt) cvrdt
+begin
+
+definition "merge-set" : "merge a b = a \<union> b"
+
+instance proof
+  fix a b c :: "'a set"
+  show "merge a b = merge b a"
+  thus "merge a a = a"
+  thus "merge (merge a b) c = merge a (merge b c)"
+qed
+
+end
+
 export_code "merge" in Scala
   module_name "CvRDT"
 
