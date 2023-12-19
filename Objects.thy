@@ -11,33 +11,6 @@ begin
     fun merge :: "'a => 'a => 'a" where "merge a b = sup a b"
 end
 
-datatype 'a USet = USet "'a set"
-
-fun uset_add :: "'a USet => 'a => 'a USet" where
-  "uset_add (USet s) e = USet (s \<union> {e})"
-fun uset_value :: "'a USet => 'a set" where
-  "uset_value (USet s) = s"
-
-fun identity :: "'a => 'a" where
-    "identity x = x"
-
-fun add_to_set :: "'a set => 'a => 'a set" where
-    "add_to_set all e = all \<union> {e}"
-
-interpretation uset_cvrdt : mycvrdt
-    Set.subset_eq
-    Set.subset
-    Set.union
-    Set.empty
-    identity
-    add_to_set
-proof
-    show "\<And>a u. a \<subseteq> add_to_set a u" by auto
-qed
-
-instantiation USet :: (type) mycvrdt
-begin
-end
 
 (*locale cvrdt =
   fixes initial :: "'s"
