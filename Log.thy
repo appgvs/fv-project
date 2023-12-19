@@ -1,4 +1,4 @@
-theory log
+theory Log
   imports CvRDT HOL.Set HOL.Fun
 begin
 
