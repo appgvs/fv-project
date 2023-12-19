@@ -29,4 +29,28 @@ fun subset :: "'a PNSet => 'a PNSet => bool" where
 fun union :: "'a PNSet => 'a PNSet => 'a PNSet" where
     "union (PNSet a1 r1) (PNSet a2 r2) = PNSet (Set.union a1 a2) (Set.union r1 r2)"
 
+interpretation PNSetCvRDT : CvRDT
+    PNSet.subset_eq
+    PNSet.subset
+    PNSet.union
+    PNSet.initial
+    PNSet.elements
+    PNSet.update
+proof
+    show "\<And>x. PNSet.subset_eq x x"
+    show "\<And>x y. PNSet.subset x y = (PNSet.subset_eq x y \<and> \<not> PNSet.subset_eq y x)"
+    show "\<And>x y z.
+       PNSet.subset_eq x y \<Longrightarrow>
+       PNSet.subset_eq y z \<Longrightarrow> PNSet.subset_eq x z"
+    show "\<And>x y. PNSet.subset_eq x y \<Longrightarrow>
+           PNSet.subset_eq y x \<Longrightarrow> x = y"
+    show "\<And>x y. PNSet.subset_eq x (PNSet.union x y)"
+    show "\<And>y x. PNSet.subset_eq y (PNSet.union x y)"
+    show "\<And>y x z.
+       PNSet.subset_eq y x \<Longrightarrow>
+       PNSet.subset_eq z x \<Longrightarrow>
+       PNSet.subset_eq (PNSet.union y z) x"
+    show "\<And>a u. PNSet.subset_eq a (add a u)"
+qed
+
 end

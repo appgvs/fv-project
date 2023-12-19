@@ -27,7 +27,7 @@ interpretation USetCvRDT : CvRDT
     USet.subset
     USet.union
     USet.initial
-    Fun.id
+    USet.elements
     USet.add
 proof
   show "\<And>x. USet.subset_eq x x"
