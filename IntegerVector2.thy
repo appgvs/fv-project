@@ -26,6 +26,21 @@ lemma less_eq_reflexive : "less_eq x x"
   apply (auto)
   done
 
+lemma less_eq_antisymmetry: "less_eq x y \<Longrightarrow> less_eq y x \<Longrightarrow> x = y"
+proof (induct x arbitrary: y)
+  case Nil
+  then show ?case 
+    using less_eq.elims(2) by auto
+next
+  case (Cons x xs)
+  then obtain ys where "y = x # ys"
+    using less_eq.elims(2) by blast
+  with Cons have "less_eq xs ys" and "less_eq ys xs"
+    by auto
+  with `y = x # ys` Cons show ?case
+    by auto
+qed
+
 lemma less_eq_transitive: "less_eq x y \<Longrightarrow> less_eq y z \<Longrightarrow> less_eq x z"
 proof (induct x arbitrary: y z)
   case Nil
@@ -74,7 +89,7 @@ proof
       by (simp add: less_eq_transitive)
     show "\<And>x y. IntegerVector2.less_eq x y \<Longrightarrow>
            IntegerVector2.less_eq y x \<Longrightarrow> x = y"
-      sorry
+      by (simp add: less_eq_antisymmetry)
     show "\<And>x y. IntegerVector2.less_eq x (IntegerVector2.merge x y)"
       sorry
     show "\<And>y x. IntegerVector2.less_eq y (IntegerVector2.merge x y)"
