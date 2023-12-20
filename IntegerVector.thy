@@ -2,13 +2,20 @@ theory IntegerVector
     imports CvRDT HOL.List
 begin
 
+(* Datatypes definitions *)
 type_synonym IntegerVector = "nat list"
 type_synonym Update = "nat"
 
+(* CvRDT methods definitions *)
 definition "initial = []"
 
 fun query :: "IntegerVector => nat list" where
     "query xs = xs"
+
+fun merge :: "IntegerVector => IntegerVector => IntegerVector" where
+    "merge v1 [] = v1" |
+    "merge [] v2 = v2" |
+    "merge (x#xs) (y#ys) = ((if (x > y) then x else y) #(merge xs ys))"
 
 fun update :: "IntegerVector => Update => IntegerVector" where
     "update []      0 = [1]" |
@@ -16,11 +23,18 @@ fun update :: "IntegerVector => Update => IntegerVector" where
     "update []      n = (0#(update [] (n-1)))" |
     "update (x#xs)  n = (x#(update xs (n-1)))"
 
+(* IntegerVector partial order *)
 fun less_eq :: "IntegerVector => IntegerVector => bool" where
     "less_eq [] _ = True" |
     "less_eq (x#xs) [] = False" |
     "less_eq (x#xs) (y#ys) = ((x \<le> y) & less_eq xs ys)"
 
+fun less :: "IntegerVector => IntegerVector => bool" where
+    "less _ [] = False" |
+    "less [] (y#ys) = True" |
+    "less (x#xs) (y#ys) = (((x < y) & less_eq xs ys) | ((x = y) & less xs ys))"
+
+(* Partial order properties *)
 lemma less_eq_reflexive : "less_eq x x"
   apply (induct x)
   apply (auto)
@@ -71,11 +85,6 @@ next
   qed
 qed
 
-fun less :: "IntegerVector => IntegerVector => bool" where
-    "less _ [] = False" |
-    "less [] (y#ys) = True" |
-    "less (x#xs) (y#ys) = (((x < y) & less_eq xs ys) | ((x = y) & less xs ys))"
-
 lemma less_comb : "less x y = (less_eq x y & (~less_eq y x))"
 proof (induct x arbitrary: y)
   case Nil
@@ -105,11 +114,6 @@ next
       using less_eq.simps(3) less_eq_antisymmetry less_eq_reflexive nat_less_le by force
   qed
 qed
-
-fun merge :: "IntegerVector => IntegerVector => IntegerVector" where
-    "merge v1 [] = v1" |
-    "merge [] v2 = v2" |
-    "merge (x#xs) (y#ys) = ((if (x > y) then x else y) #(merge xs ys))"
 
 lemma less_eq_merge_left: "less_eq x (merge x y)"
 proof (induct y arbitrary: x)

@@ -35,6 +35,11 @@ fun less :: "'a PNSet => 'a PNSet => bool" where
         (Set.subset_eq a1 a2 & Set.subset r1 r2)
     )"
 
+(* PNSet lemmas *)
+
+lemma less_eq_reflexive: "less_eq x x"
+  using less_eq.elims(3) by fastforce
+
 (* Interpretation of PNSet as a CvRDT *)
 interpretation PNSetCvRDT : CvRDT
     PNSet.less_eq
