@@ -50,14 +50,14 @@ proof
     show "\<And>x y. IntegerVector2.less_eq x y \<Longrightarrow>
            IntegerVector2.less_eq y x \<Longrightarrow> x = y"
       sorry
-    show "\<And>x y. IntegerVector2.less_eq x (IntegerVector2.max x y)"
+    show "\<And>x y. IntegerVector2.less_eq x (IntegerVector2.merge x y)"
       sorry
-    show "\<And>y x. IntegerVector2.less_eq y (IntegerVector2.max x y)"
+    show "\<And>y x. IntegerVector2.less_eq y (IntegerVector2.merge x y)"
       sorry
     show "\<And>y x z.
        IntegerVector2.less_eq y x \<Longrightarrow>
        IntegerVector2.less_eq z x \<Longrightarrow>
-       IntegerVector2.less_eq (IntegerVector2.max y z) x"
+       IntegerVector2.less_eq (IntegerVector2.merge y z) x"
       sorry
     show "\<And>a u. IntegerVector2.less_eq a (update a u)"
       sorry
