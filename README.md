@@ -4,8 +4,8 @@
 ## Running Isabelle
 
 ```bash
-isabelle build  -d . FV
+isabelle build -D . FV
 
 # Generates the browser info
-isabelle build -d . -o browser_info
+isabelle build -D . -o browser_info -v
 ```
