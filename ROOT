@@ -4,6 +4,7 @@ session CRDT = HOL +
 theories
     Export
     CvRDT
+    GCounter
     IntegerVector
     Log
     PNSet
