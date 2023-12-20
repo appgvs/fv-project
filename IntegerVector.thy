@@ -138,14 +138,6 @@ lemma merge_empty_left : "merge [] y = y"
   apply (auto)
   done
 
-(*lemma merge_non_empty_left: "a \<noteq> [] \<Longrightarrow> merge a b \<noteq> []"
-proof (rule ccontr)
-  assume "a \<noteq> []" and "merge a b = []"
-  then obtain x xs where "a = x # xs" by (cases a, auto)
-  then have "merge (x # xs) b \<noteq> []" by (cases b, simp_all)
-  with `merge a b = []` show False by simp
-qed*)
-
 lemma merge_empty_right : "merge x [] = x"
   apply (induct x)
   apply (auto)
