@@ -131,6 +131,27 @@ proof -
   then show "less_eq y (merge x y)" using merge_comm by simp
 qed
 
+lemma update_monotonicity: "less_eq a (update a u)"
+proof (induct a arbitrary: u)
+  case Nil
+  then show ?case
+    apply (auto)
+    done
+  case (Cons x xs)
+  then show ?case
+  proof (cases u)
+    case 0
+    then show ?thesis
+      apply (auto)
+      apply (simp add: less_eq_reflexive)
+      done
+  next
+    case (Suc n)
+    then show ?thesis
+      apply (auto) using Cons.hyps less_eq.simps(3) by blast
+  qed
+qed
+
 interpretation IntVector2CvRDT : CvRDT
   IntegerVector2.less_eq
   IntegerVector2.less
@@ -160,6 +181,6 @@ proof
        IntegerVector2.less_eq (IntegerVector2.merge y z) x"
       sorry
     show "\<And>a u. IntegerVector2.less_eq a (update a u)"
-      sorry
+      by (simp add: update_monotonicity)
 qed
 end
