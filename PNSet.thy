@@ -35,6 +35,33 @@ fun less :: "'a PNSet => 'a PNSet => bool" where
         (Set.subset_eq a1 a2 & Set.subset r1 r2)
     )"
 
+(* PNSet properties *)
+
+lemma initial_contains_nothing: "\<not> e \<in> (query initial)"
+  by (simp add: initial_def)
+
+lemma initial_add_contains_element: "e \<in> query (add initial e)"
+  by (simp add: initial_def)
+
+lemma merge_keep_common_items: "e \<in> query a \<and> e \<in> query b \<Longrightarrow> e \<in> query (merge a b)"
+  apply (induct a)
+  apply (induct b)
+  by auto
+
+lemma merge_creates_no_item: "\<not> e \<in> query a \<and> \<not> e \<in> query b \<Longrightarrow> \<not> e \<in> query (merge a b)"
+  apply (induct a)
+  apply (induct b)
+  by auto
+
+lemma add_remove_commutative: "remove (add s a) a = add (remove s a) a"
+  apply (induct s)
+  by auto
+
+lemma merge_preserves_removals: "\<not> e \<in> query (merge (remove s e) x)"
+  apply (induct s)
+  apply (induct x)
+  by auto
+
 (* PNSet lemmas *)
 
 lemma less_eq_reflexive: "less_eq x x"
