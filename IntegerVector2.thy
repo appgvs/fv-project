@@ -53,14 +53,22 @@ proof (induct x arbitrary: y z)
   then show ?case by simp
 next
   case (Cons x xs)
-  then obtain ys zs where "y = x # ys" and "z = x # zs"
-    using less_eq.elims(2) by blast
-  with Cons have "less_eq xs ys" and "less_eq ys zs"
-    by auto
-  with Cons have "less_eq xs zs"
-    by blast
-  with `y = x # ys` `z = x # zs` Cons show ?case
-    by auto
+  then show ?case
+  proof (induct y arbitrary: z)
+    case Nil
+    then show ?case by simp
+  next
+    case (Cons y ys)
+    then show ?case
+    proof (induct z)
+      case Nil
+      then show ?case by simp
+    next
+      case (Cons z zs)
+      then show ?case
+        by (meson dual_order.trans less_eq.simps(3))
+    qed
+  qed
 qed
 
 fun less :: "IntegerVector => IntegerVector => bool" where
@@ -68,7 +76,7 @@ fun less :: "IntegerVector => IntegerVector => bool" where
     "less [] (y#ys) = True" |
     "less (x#xs) (y#ys) = (((x < y) & less_eq xs ys) | ((x = y) & less xs ys))"
 
-lemma less_comb  : "less x y = (less_eq x y & (~less_eq y x))"
+lemma less_comb : "less x y = (less_eq x y & (~less_eq y x))"
   apply (induct x arbitrary: y)
   by auto
 
@@ -185,7 +193,6 @@ next
       apply (auto)
       done
   next
-    next
   case (Cons y ys)
   from `less_eq (x # xs) c` obtain z zs where c_eq: "c = z # zs" using less_eq_non_empty by blast
   then show ?case
