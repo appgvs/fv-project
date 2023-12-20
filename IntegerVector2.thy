@@ -77,8 +77,34 @@ fun less :: "IntegerVector => IntegerVector => bool" where
     "less (x#xs) (y#ys) = (((x < y) & less_eq xs ys) | ((x = y) & less xs ys))"
 
 lemma less_comb : "less x y = (less_eq x y & (~less_eq y x))"
-  apply (induct x arbitrary: y)
-  by auto
+proof (induct x arbitrary: y)
+  case Nil
+  then show ?case
+  proof (induct y)
+    case Nil
+    then show ?case
+      apply (auto)
+      done
+  next
+    case (Cons y ys)
+    then show ?case
+      apply (auto)
+      done
+  qed
+next
+  case (Cons x xs)
+  then show ?case
+  proof (induct y)
+    case Nil
+    then show ?case
+      apply (auto)
+      done
+  next
+    case (Cons y ys)
+    then show ?case
+      using less_eq.simps(3) less_eq_antisymmetry less_eq_reflexive nat_less_le by force
+  qed
+qed
 
 fun merge :: "IntegerVector => IntegerVector => IntegerVector" where
     "merge v1 [] = v1" |
