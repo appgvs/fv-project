@@ -31,4 +31,35 @@ fun merge :: "IntegerVector => IntegerVector => IntegerVector" where
     "merge [] v2 = v2" |
     "merge (x#xs) (y#ys) = ((if (x > y) then x else y) #(merge xs ys))"
 
+interpretation IntVector2CvRDT : CvRDT
+  IntegerVector2.less_eq
+  IntegerVector2.less
+  IntegerVector2.merge
+  IntegerVector2.initial
+  IntegerVector2.query
+  IntegerVector2.update
+proof
+    show "\<And>x. IntegerVector2.less_eq x x"
+      sorry
+    show "\<And>x y. IntegerVector2.less x y = (IntegerVector2.less_eq x y \<and> \<not> IntegerVector2.less_eq y x)"
+      sorry
+    show "\<And>x y z.
+       IntegerVector2.less_eq x y \<Longrightarrow>
+       IntegerVector2.less_eq y z \<Longrightarrow> IntegerVector2.less_eq x z"
+      sorry
+    show "\<And>x y. IntegerVector2.less_eq x y \<Longrightarrow>
+           IntegerVector2.less_eq y x \<Longrightarrow> x = y"
+      sorry
+    show "\<And>x y. IntegerVector2.less_eq x (IntegerVector2.max x y)"
+      sorry
+    show "\<And>y x. IntegerVector2.less_eq y (IntegerVector2.max x y)"
+      sorry
+    show "\<And>y x z.
+       IntegerVector2.less_eq y x \<Longrightarrow>
+       IntegerVector2.less_eq z x \<Longrightarrow>
+       IntegerVector2.less_eq (IntegerVector2.max y z) x"
+      sorry
+    show "\<And>a u. IntegerVector2.less_eq a (update a u)"
+      sorry
+qed
 end
