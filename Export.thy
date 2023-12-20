@@ -6,7 +6,7 @@ theory Export
       Log
       IntegerVector
       GCounter
-      "~~/src/HOL/Library/Code_Target_Numeral"
+      (* "~~/src/HOL/Library/Code_Target_Numeral" *)
 begin
 
 export_code
