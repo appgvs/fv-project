@@ -131,6 +131,9 @@ proof -
   then show "less_eq y (merge x y)" using merge_comm by simp
 qed
 
+lemma less_eq_merge_bound: "less_eq a c \<Longrightarrow> less_eq b c \<Longrightarrow> less_eq (merge a b) c"
+  sorry
+
 lemma update_monotonicity: "less_eq a (update a u)"
 proof (induct a arbitrary: u)
   case Nil
@@ -179,7 +182,7 @@ proof
        IntegerVector2.less_eq y x \<Longrightarrow>
        IntegerVector2.less_eq z x \<Longrightarrow>
        IntegerVector2.less_eq (IntegerVector2.merge y z) x"
-      sorry
+      by (simp add: less_eq_merge_bound)
     show "\<And>a u. IntegerVector2.less_eq a (update a u)"
       by (simp add: update_monotonicity)
 qed
