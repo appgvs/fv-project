@@ -52,6 +52,28 @@ fun merge :: "IntegerVector => IntegerVector => IntegerVector" where
     "merge [] v2 = v2" |
     "merge (x#xs) (y#ys) = ((if (x > y) then x else y) #(merge xs ys))"
 
+lemma less_eq_merge_left: "less_eq x (merge x y)"
+proof (induct y arbitrary: x)
+  case Nil
+  then show ?case
+    apply (auto)
+    by (simp add: less_eq_reflexive)
+next
+  case (Cons a y)
+  then show ?case
+  proof (induct x)
+    case Nil
+    then show ?case
+      apply (auto)
+      done
+  next
+    case (Cons x xs)
+    then show ?case
+      apply (auto)
+      done
+  qed
+qed
+
 interpretation IntVector2CvRDT : CvRDT
   IntegerVector2.less_eq
   IntegerVector2.less
@@ -72,7 +94,7 @@ proof
            IntegerVector2.less_eq y x \<Longrightarrow> x = y"
       sorry
     show "\<And>x y. IntegerVector2.less_eq x (IntegerVector2.merge x y)"
-      sorry
+      by (simp add: less_eq_merge_left)
     show "\<And>y x. IntegerVector2.less_eq y (IntegerVector2.merge x y)"
       sorry
     show "\<And>y x z.
