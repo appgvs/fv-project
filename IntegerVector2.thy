@@ -47,6 +47,10 @@ fun less :: "IntegerVector => IntegerVector => bool" where
     "less [] (y#ys) = True" |
     "less (x#xs) (y#ys) = (((x < y) & less_eq xs ys) | ((x = y) & less xs ys))"
 
+lemma less_comb  : "less x y = (less_eq x y & (~less_eq y x))"
+  apply (induct x arbitrary: y)
+  by auto
+
 fun merge :: "IntegerVector => IntegerVector => IntegerVector" where
     "merge v1 [] = v1" |
     "merge [] v2 = v2" |
@@ -63,7 +67,7 @@ proof
     show "\<And>x. IntegerVector2.less_eq x x"
       by (simp add: less_eq_reflexive)
     show "\<And>x y. IntegerVector2.less x y = (IntegerVector2.less_eq x y \<and> \<not> IntegerVector2.less_eq y x)"
-      sorry
+      by (simp add: less_comb)
     show "\<And>x y z.
        IntegerVector2.less_eq x y \<Longrightarrow>
        IntegerVector2.less_eq y z \<Longrightarrow> IntegerVector2.less_eq x z"
