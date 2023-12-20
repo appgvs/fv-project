@@ -93,6 +93,45 @@ next
   qed
 qed
 
+lemma merge_commutativity : "merge x y = merge y x"
+proof (induct x arbitrary: y)
+  case Nil
+  then show ?case
+  proof(induct y)
+    case Nil
+    then show ?case
+      apply (auto)
+      done
+  next
+    case (Cons b bs)
+    then show ?case
+      
+next
+  case (Cons a as)
+  then show ?case
+    sorry
+  
+
+lemma less_eq_merge_right: "less_eq y (merge x y)"
+proof (induct x arbitrary: y)
+  case Nil
+  then show ?case
+    
+    sorry
+next
+  case (Cons a y)
+  then show ?case
+  proof (induct x)
+    case Nil
+    then show ?case
+      sorry
+  next
+    case (Cons x xs)
+    then show ?case
+      sorry
+  qed
+qed
+
 interpretation IntVector2CvRDT : CvRDT
   IntegerVector2.less_eq
   IntegerVector2.less
