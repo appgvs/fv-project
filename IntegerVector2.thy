@@ -98,6 +98,14 @@ lemma merge_empty_left : "merge [] y = y"
   apply (auto)
   done
 
+(*lemma merge_non_empty_left: "a \<noteq> [] \<Longrightarrow> merge a b \<noteq> []"
+proof (rule ccontr)
+  assume "a \<noteq> []" and "merge a b = []"
+  then obtain x xs where "a = x # xs" by (cases a, auto)
+  then have "merge (x # xs) b \<noteq> []" by (cases b, simp_all)
+  with `merge a b = []` show False by simp
+qed*)
+
 lemma merge_empty_right : "merge x [] = x"
   apply (induct x)
   apply (auto)
@@ -110,6 +118,7 @@ proof (induct x arbitrary: y)
     apply (auto)
     apply (simp add: merge_empty_left)
     done
+next
   case (Cons a as)
   then show ?case
   proof (induct y)
@@ -131,8 +140,50 @@ proof -
   then show "less_eq y (merge x y)" using merge_comm by simp
 qed
 
+lemma merge_takes_greater: "merge (x#xs) (y#ys) = (if x > y then x#(merge xs ys) else y#(merge xs ys))"
+  apply(induct x)
+  apply (auto)
+  done
+
+lemma less_eq_non_empty:
+  assumes "less_eq (x#xs) c"
+  shows "\<exists> z zs. c = z # zs"
+proof -
+  from assms show ?thesis
+  proof (cases c)
+    case Nil
+    then show ?thesis 
+      using assms
+      by (cases "x # xs", auto)
+  next
+    case (Cons z zs)
+    then show ?thesis by auto
+  qed
+qed
+
 lemma less_eq_merge_bound: "less_eq a c \<Longrightarrow> less_eq b c \<Longrightarrow> less_eq (merge a b) c"
-  sorry
+proof (induct a arbitrary: b c)
+  case Nil
+  then show ?case
+  proof -
+    from merge_empty_left have "merge [] b = b" by simp
+    then have "less_eq (merge [] b) c" using Nil.prems by simp
+    then show ?thesis by assumption
+  qed
+next
+  case (Cons x xs)
+  then show ?case
+  proof (induct b)
+    case Nil
+    then show ?case
+      apply (auto)
+      done
+  next
+    case (Cons y ys)
+    then show ?case
+      sorry
+  qed
+qed
 
 lemma update_monotonicity: "less_eq a (update a u)"
 proof (induct a arbitrary: u)
