@@ -20,6 +20,9 @@ fun merge :: "GCounter => GCounter => GCounter" where
 fun update :: "GCounter => Inc => GCounter" where
     "update (GCounter l) (Inc n) = GCounter (IntegerVector.update l n)"
 
+fun increment :: "GCounter \<Rightarrow> nat \<Rightarrow> GCounter" where
+    "increment c n = update c (Inc n)"
+
 fun less_eq :: "GCounter => GCounter => bool" where
     "less_eq (GCounter a) (GCounter b) = IntegerVector.less_eq a b"
 
