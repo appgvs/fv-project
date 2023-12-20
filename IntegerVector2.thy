@@ -93,43 +93,42 @@ next
   qed
 qed
 
-lemma merge_commutativity : "merge x y = merge y x"
+lemma merge_empty_left : "merge [] y = y"
+  apply (induct y)
+  apply (auto)
+  done
+
+lemma merge_empty_right : "merge x [] = x"
+  apply (induct x)
+  apply (auto)
+  done
+
+lemma merge_commutativity : "merge x y  = merge y x"
 proof (induct x arbitrary: y)
   case Nil
   then show ?case
-  proof(induct y)
+    apply (auto)
+    apply (simp add: merge_empty_left)
+    done
+  case (Cons a as)
+  then show ?case
+  proof (induct y)
     case Nil
     then show ?case
       apply (auto)
       done
-  next
     case (Cons b bs)
     then show ?case
-      
-next
-  case (Cons a as)
-  then show ?case
-    sorry
-  
+      apply (auto)
+      done
+  qed
+qed
 
 lemma less_eq_merge_right: "less_eq y (merge x y)"
-proof (induct x arbitrary: y)
-  case Nil
-  then show ?case
-    
-    sorry
-next
-  case (Cons a y)
-  then show ?case
-  proof (induct x)
-    case Nil
-    then show ?case
-      sorry
-  next
-    case (Cons x xs)
-    then show ?case
-      sorry
-  qed
+proof -
+  have merge_comm: "merge x y = merge y x" by (rule merge_commutativity)
+  then have "less_eq y (merge y x)" using less_eq_merge_left by simp
+  then show "less_eq y (merge x y)" using merge_comm by simp
 qed
 
 interpretation IntVector2CvRDT : CvRDT
@@ -154,7 +153,7 @@ proof
     show "\<And>x y. IntegerVector2.less_eq x (IntegerVector2.merge x y)"
       by (simp add: less_eq_merge_left)
     show "\<And>y x. IntegerVector2.less_eq y (IntegerVector2.merge x y)"
-      sorry
+      by (simp add: less_eq_merge_right)
     show "\<And>y x z.
        IntegerVector2.less_eq y x \<Longrightarrow>
        IntegerVector2.less_eq z x \<Longrightarrow>
