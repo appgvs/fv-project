@@ -11,6 +11,10 @@ fun listsum :: "nat list \<Rightarrow> nat" where
     "listsum [] = 0" |
     "listsum (x#xs) = x + listsum xs"
 
+lemma list_add_head: "listsum ((x+n)#xs) = n + listsum (x#xs)"
+    apply (induct xs)
+    by auto
+
 fun query :: "GCounter => nat" where
     "query (GCounter l) = listsum l"
 
@@ -28,6 +32,56 @@ fun less_eq :: "GCounter => GCounter => bool" where
 
 fun less :: "GCounter => GCounter => bool" where
     "less (GCounter a) (GCounter b) = IntegerVector.less a b"
+
+(* list lemmas *)
+
+lemma empty_list_sum_zero: "listsum [] = 0"
+  by auto
+
+(* GCounter properties *)
+
+lemma initial_counter_sum_zero: "query initial_counter = 0"
+  unfolding initial_counter_def
+  apply (auto)
+  unfolding initial_def
+  by auto
+
+lemma update_listsum_suc: "listsum (IntegerVector.update xa m) = Suc (listsum xa) \<Longrightarrow> listsum (IntegerVector.update (a # xa) (Suc m)) = Suc (a + listsum xa)"
+  by auto
+
+(*lemma increment_adds_one_zo_sum: "query (increment x n) = 1 + (query x)"
+proof (induct x arbitrary: n)
+  case (GCounter xa)
+  then show ?case
+    apply (auto)
+    proof (induct xa)
+      case Nil
+      then show ?case
+        apply(auto)
+      proof (induct n)
+        case 0
+        then show ?case by auto
+      next
+        case (Suc m)
+        then show ?case by auto
+      qed
+    next
+      case (Cons a xa)
+      then show ?case
+        apply(auto)
+      proof (induct n)
+        case 0
+        then show ?case
+          by auto
+      next
+        case (Suc m)
+        then show ?case
+        
+      qed
+    qed
+qed
+*)
+  
 
 (* CvRDT interpretation *)
 
