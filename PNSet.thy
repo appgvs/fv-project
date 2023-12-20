@@ -2,9 +2,11 @@ theory PNSet
     imports CvRDT HOL.Set HOL.Fun
 begin
 
+(* Datatypes definitions *)
 datatype 'a PNSet = PNSet "'a set" "'a set"
 datatype 'a PNSetUpdate = Add "'a" | Remove "'a"
 
+(* CvRDT methods definitions *)
 definition "initial = PNSet Set.empty Set.empty"
 
 fun update :: "'a PNSet => 'a PNSetUpdate => 'a PNSet" where
@@ -17,51 +19,53 @@ fun add :: "'a PNSet => 'a => 'a PNSet" where
 fun remove :: "'a PNSet => 'a => 'a PNSet" where
     "remove pnset e = update pnset (Remove e)"
 
-fun elements :: "'a PNSet => 'a set" where
-    "elements (PNSet a r) = a - r"
+fun query :: "'a PNSet => 'a set" where
+    "query (PNSet a r) = a - r"
 
-fun subset_eq :: "'a PNSet => 'a PNSet => bool" where
-    "subset_eq (PNSet a1 r1) (PNSet a2 r2) = (Set.subset_eq a1 a2 & Set.subset_eq r1 r2)"
+fun merge :: "'a PNSet => 'a PNSet => 'a PNSet" where
+    "merge (PNSet a1 r1) (PNSet a2 r2) = PNSet (Set.union a1 a2) (Set.union r1 r2)"
 
-fun subset :: "'a PNSet => 'a PNSet => bool" where
-    "subset (PNSet a1 r1) (PNSet a2 r2) = (
+(* PNSet partial order *)
+fun less_eq :: "'a PNSet => 'a PNSet => bool" where
+    "less_eq (PNSet a1 r1) (PNSet a2 r2) = (Set.subset_eq a1 a2 & Set.subset_eq r1 r2)"
+
+fun less :: "'a PNSet => 'a PNSet => bool" where
+    "less (PNSet a1 r1) (PNSet a2 r2) = (
         (Set.subset a1 a2 & Set.subset_eq r1 r2) |
         (Set.subset_eq a1 a2 & Set.subset r1 r2)
     )"
 
-fun union :: "'a PNSet => 'a PNSet => 'a PNSet" where
-    "union (PNSet a1 r1) (PNSet a2 r2) = PNSet (Set.union a1 a2) (Set.union r1 r2)"
-
+(* Interpretation of PNSet as a CvRDT *)
 interpretation PNSetCvRDT : CvRDT
-    PNSet.subset_eq
-    PNSet.subset
-    PNSet.union
+    PNSet.less_eq
+    PNSet.less
+    PNSet.merge
     PNSet.initial
-    PNSet.elements
+    PNSet.query
     PNSet.update
 proof
-    show "\<And>x. PNSet.subset_eq x x"
-      using subset_eq.elims(3) by fastforce
-    show "\<And>x y. PNSet.subset x y = (PNSet.subset_eq x y \<and> \<not> PNSet.subset_eq y x)"
-      by (smt (z3) order.preordering_axioms preordering.strict_iff_not subset.elims(1) subset_eq.simps)
+    show "\<And>x. PNSet.less_eq x x"
+      using less_eq.elims(3) by fastforce
+    show "\<And>x y. PNSet.less x y = (PNSet.less_eq x y \<and> \<not> PNSet.less_eq y x)"
+      by (smt (z3) order.preordering_axioms preordering.strict_iff_not less.elims(1) less_eq.simps)
     show "\<And>x y z.
-       PNSet.subset_eq x y \<Longrightarrow>
-       PNSet.subset_eq y z \<Longrightarrow> PNSet.subset_eq x z"
-      by (smt (verit, best) PNSet.inject subset_eq.elims(1) subset_trans)
-    show "\<And>x y. PNSet.subset_eq x y \<Longrightarrow>
-           PNSet.subset_eq y x \<Longrightarrow> x = y"
-      using subset_eq.elims(2) by fastforce
-    show "\<And>x y. PNSet.subset_eq x (PNSet.union x y)"
-      by (smt (verit, del_insts) PNSet.inject UnCI subsetI subset_eq.elims(3) union.elims)
-    show "\<And>y x. PNSet.subset_eq y (PNSet.union x y)"
-      by (smt (verit, del_insts) PNSet.inject UnCI \<open>\<And>y x. PNSet.subset_eq x (PNSet.union x y)\<close> subsetI subset_eq.elims(2) subset_eq.elims(3) union.simps)
+       PNSet.less_eq x y \<Longrightarrow>
+       PNSet.less_eq y z \<Longrightarrow> PNSet.less_eq x z"
+      by (smt (verit, best) PNSet.inject less_eq.elims(1) subset_trans)
+    show "\<And>x y. PNSet.less_eq x y \<Longrightarrow>
+           PNSet.less_eq y x \<Longrightarrow> x = y"
+      using less_eq.elims(2) by fastforce
+    show "\<And>x y. PNSet.less_eq x (PNSet.merge x y)"
+      by (smt (verit, del_insts) PNSet.inject UnCI subsetI less_eq.elims(3) merge.elims)
+    show "\<And>y x. PNSet.less_eq y (PNSet.merge x y)"
+      by (smt (verit, del_insts) PNSet.inject UnCI \<open>\<And>y x. PNSet.less_eq x (PNSet.merge x y)\<close> subsetI less_eq.elims(2) less_eq.elims(3) merge.simps)
     show "\<And>y x z.
-       PNSet.subset_eq y x \<Longrightarrow>
-       PNSet.subset_eq z x \<Longrightarrow>
-       PNSet.subset_eq (PNSet.union y z) x"
-      by (smt (verit, del_insts) PNSet.inject Un_subset_iff subset_eq.elims(2) subset_eq.elims(3) union.simps)
-    show "\<And>a u. PNSet.subset_eq a (update a u)"
-      by (metis PNSet.exhaust PNSetUpdate.exhaust \<open>\<And>x. PNSet.subset_eq x x\<close> le_sup_iff subset_eq.simps update.simps(1) update.simps(2))
+       PNSet.less_eq y x \<Longrightarrow>
+       PNSet.less_eq z x \<Longrightarrow>
+       PNSet.less_eq (PNSet.merge y z) x"
+      by (smt (verit, del_insts) PNSet.inject Un_subset_iff less_eq.elims(2) less_eq.elims(3) merge.simps)
+    show "\<And>a u. PNSet.less_eq a (update a u)"
+      by (metis PNSet.exhaust PNSetUpdate.exhaust \<open>\<And>x. PNSet.less_eq x x\<close> le_sup_iff less_eq.simps update.simps(1) update.simps(2))
 qed
 
 end
