@@ -219,24 +219,17 @@ next
       apply (auto)
       done
   next
-  case (Cons y ys)
-  from `less_eq (x # xs) c` obtain z zs where c_eq: "c = z # zs" using less_eq_non_empty by blast
-  then show ?case
-    proof (cases "x > y")
-      case True
-      with `less_eq (x # xs) c` c_eq have "x \<le> z" by (metis list.sel(1) less_eq.elims(3))
-      moreover have xs_less_eq_zs: "less_eq xs zs" using `less_eq (x # xs) c` c_eq by (metis list.sel(3) less_eq.elims(3))
-      moreover have y_ys_less_eq_c: "less_eq (y # ys) c" using `less_eq (y # ys) c`
-        by simp
-      then have ys_less_eq_zs: "less_eq ys zs" using c_eq
-        by (metis list.sel(3) less_eq.elims(3))
-      ultimately show ?thesis by (simp add: merge.simps less_eq.simps)
+    case (Cons y ys)
+    then show ?case
+    proof (induct c)
+      case Nil
+      then show ?case
+        apply (auto)
+        done
     next
-      case False
-      with `less_eq (y # ys) c` c_eq have "y \<le> z"
-        by (metis list.sel(1) less_eq.elims(3))
-      moreover have "less_eq (merge (x # xs) ys) zs" using Cons.hyps `less_eq (x # xs) c` by simp
-      ultimately show ?thesis by (simp add: merge.simps less_eq.simps)
+      case (Cons z zs)
+      then show ?case
+        by simp
     qed
   qed
 qed
