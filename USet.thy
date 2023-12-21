@@ -30,6 +30,10 @@ lemma query_contains_add: "e \<in> query (add s e)"
 lemma initial_contains_nothing: "\<not> e \<in> (query initial)"
   by (simp add: initial_def)
 
+lemma updated_preserves_items: "e \<in> query s ==> e \<in> query (add s a)"
+  apply (induct s)
+  by auto
+
 lemma merge_preserves_items: "e \<in> query a \<Longrightarrow> e \<in> query (merge a b)"
   apply (induct a)
   apply (induct b)
