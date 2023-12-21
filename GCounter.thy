@@ -71,7 +71,7 @@ lemma update_empty: "listsum (IntegerVector.update [] n) = 1"
   by auto
 
 
-lemma increment_adds_one_zo_sum: "query (increment x n) = 1 + (query x)"
+(*lemma increment_adds_one_zo_sum: "query (increment x n) = 1 + (query x)"
 proof (induct x arbitrary: n)
   case (GCounter xa)
   then show ?case
@@ -101,7 +101,7 @@ proof (induct x arbitrary: n)
           sorry
       qed
     qed
-qed
+qed*)
   
 
 (* CvRDT interpretation *)
