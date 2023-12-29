@@ -7,7 +7,7 @@ datatype 'a USet = USet "'a set"
 definition "initial = USet Set.empty"
 
 fun add :: "'a USet => 'a => 'a USet" where
-  "add (USet s) e = USet (s \<union> {e})"
+  "add (USet s) e = USet (Set.union s {e})"
 
 fun query :: "'a USet => 'a set" where
   "query (USet s) = s"
@@ -19,7 +19,7 @@ fun less :: "'a USet => 'a USet => bool" where
     "less (USet s1) (USet s2) = Set.subset s1 s2"
 
 fun merge :: "'a USet => 'a USet => 'a USet" where
-    "merge (USet s1) (USet s2) = USet (s1 \<union> s2)"
+    "merge (USet s1) (USet s2) = USet (Set.union s1 s2)"
 
 (* USet properties *)
 
@@ -138,6 +138,7 @@ proof
     by (simp add:less_eq_merge_count)
   show "\<And>a u. USet.less_eq a (add a u)"
     by (simp add:less_eq_add_monotonic)
+
 qed
 
 end
