@@ -63,7 +63,77 @@ lemma list_update_zero: "listsum (IntegerVector.update x 0) = 1 + listsum x"
   by (auto)
 
 lemma listsum_pos: "listsum (IntegerVector.update xs a) = listsum (IntegerVector.update xs b)"
-  sorry
+proof (induct xs arbitrary: a b)
+case Nil
+then show ?case by (metis listsum_update_nil)
+next
+case (Cons y ys)
+then show ?case
+  proof (induct a arbitrary: b)
+  case 0
+  then show ?case
+    proof (induct b)
+      case 0
+      then show ?case by auto
+    next
+      case (Suc bs)
+      then show ?case
+        proof -
+          have forward: "listsum (IntegerVector.update (y # ys) 0) = listsum ((y+1)#ys)" by auto
+          then have "listsum ((y+1)#ys) = 1 + y + listsum ys" by auto
+
+          have backward: "listsum (IntegerVector.update (y # ys) (Suc bs)) = listsum (y#(IntegerVector.update ys bs))" by auto
+          then have "listsum (y#(IntegerVector.update ys bs)) = y + listsum (IntegerVector.update ys bs)" using listsum_head by blast
+          then have "y + listsum (IntegerVector.update ys bs) = y + (1 + listsum ys)" by (metis list_update_zero local.Cons)
+          then have "y + (1 + listsum ys) = 1 + y + listsum ys" by simp
+
+          show "listsum (IntegerVector.update (y # ys) 0) = listsum (IntegerVector.update (y # ys) (Suc bs))"
+            by (simp add: \<open>y + listsum (IntegerVector.update ys bs) = y + (1 + listsum ys)\<close>)
+        qed
+    qed
+  next
+  case (Suc as)
+  then show ?case
+    proof (induct b)
+    case 0
+      then show ?case
+        proof -
+          have forward: "listsum (IntegerVector.update (y # ys) (Suc as)) = listsum (y#(IntegerVector.update ys as))" by auto
+          then have "listsum (y#(IntegerVector.update ys as)) = listsum (y#(IntegerVector.update ys 0))" by (simp add: local.Cons)
+          then have "listsum (y#(IntegerVector.update ys 0)) = y + listsum (IntegerVector.update ys 0)" by simp
+          then have "y + listsum (IntegerVector.update ys 0) = y + 1 + listsum ys" by (simp add: list_update_zero)
+
+          have backward: "listsum (IntegerVector.update (y # ys) 0) = listsum ((y+1)#ys)" by auto
+          then have "listsum ((y+1)#ys) = y + 1 + listsum ys" by simp
+
+          show "listsum (IntegerVector.update (y # ys) (Suc as)) = listsum (IntegerVector.update (y # ys) 0)" by (metis Suc.hyps local.Cons)
+      qed
+    next
+    case (Suc bs)
+    (*listsum (IntegerVector.update (y # ys) (Suc as)) = listsum (IntegerVector.update (y # ys) (Suc bs))*)
+      then show ?case
+        proof -
+          have forward: "listsum (IntegerVector.update (y # ys) (Suc as)) = listsum (y#(IntegerVector.update ys as))" by auto
+          then have "listsum (y#(IntegerVector.update ys as)) = y + listsum (IntegerVector.update ys as)" by auto
+          then have "y + listsum (IntegerVector.update ys as) = y + listsum (IntegerVector.update ys 0)" using local.Cons by auto
+
+          have backward: "listsum (IntegerVector.update (y # ys) (Suc bs)) = listsum (y#(IntegerVector.update ys bs))" by auto
+          then have "listsum (y#(IntegerVector.update ys bs)) = y + listsum (IntegerVector.update ys bs)" by auto
+          then have "y + listsum (IntegerVector.update ys bs) = y + listsum (IntegerVector.update ys 0)" using local.Cons by auto
+
+          show "listsum (IntegerVector.update (y # ys) (Suc as)) = listsum (IntegerVector.update (y # ys) (Suc bs))" using local.Cons by auto
+        qed
+    qed
+
+    (*listsum (IntegerVector.update (y # ys) (Suc as)) = listsum (IntegerVector.update (y # ys) b)*)
+    (*proof -
+      have forward: "listsum (IntegerVector.update (y # ys) (Suc as)) = listsum (y#(IntegerVector.update ys as))" by auto
+      then have "listsum (y#(IntegerVector.update ys as)) = listsum (y#(IntegerVector.update ys 0))" by (simp add: local.Cons)
+      then have "listsum (y#(IntegerVector.update ys 0)) = y + listsum (IntegerVector.update ys 0)" by simp
+      then have "y + listsum (IntegerVector.update ys 0) = y + 1 + listsum ys" by (simp add: list_update_zero)
+    qed*)
+  qed
+qed
 
 lemma listsum_update_insert: "listsum (y # (IntegerVector.update ys n)) = listsum (IntegerVector.update (y#ys) n)"
 proof (induct ys)
