@@ -38,12 +38,12 @@ lemma updated_preserves_items: "e \<in> query s ==> e \<in> query (add s a)"
   apply (induct s)
   by auto
 
-lemma merge_preserves_items: "e \<in> query a \<Longrightarrow> e \<in> query (merge a b)"
+lemma merge_preserves_items: "e \<in> query a ==> e \<in> query (merge a b)"
   apply (induct a)
   apply (induct b)
   by auto
 
-lemma merge_creates_no_item: "\<not> e \<in> query a \<and> \<not> e \<in> query b \<Longrightarrow> \<not> e \<in> query (merge a b)"
+lemma merge_creates_no_item: "\<not> e \<in> query a \<and> \<not> e \<in> query b ==> \<not> e \<in> query (merge a b)"
   apply (induct a)
   apply (induct b)
   by auto
