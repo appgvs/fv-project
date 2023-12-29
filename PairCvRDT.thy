@@ -51,6 +51,7 @@ begin
     using CvRDT_def[of bot1 less_eq1 less1 sup1 update1] assms(1)
     by (simp add: order.refl)*)
 
+    (*
     lemma less_eq_reflexive: "less_eq x x"
         apply (cases x)
         apply (auto)
@@ -69,6 +70,7 @@ begin
     proof
         
     oops
+    *)
 end
 
 end

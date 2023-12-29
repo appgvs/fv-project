@@ -110,7 +110,6 @@ then show ?case
       qed
     next
     case (Suc bs)
-    (*listsum (IntegerVector.update (y # ys) (Suc as)) = listsum (IntegerVector.update (y # ys) (Suc bs))*)
       then show ?case
         proof -
           have forward: "listsum (IntegerVector.update (y # ys) (Suc as)) = listsum (y#(IntegerVector.update ys as))" by auto
@@ -124,14 +123,6 @@ then show ?case
           show "listsum (IntegerVector.update (y # ys) (Suc as)) = listsum (IntegerVector.update (y # ys) (Suc bs))" using local.Cons by auto
         qed
     qed
-
-    (*listsum (IntegerVector.update (y # ys) (Suc as)) = listsum (IntegerVector.update (y # ys) b)*)
-    (*proof -
-      have forward: "listsum (IntegerVector.update (y # ys) (Suc as)) = listsum (y#(IntegerVector.update ys as))" by auto
-      then have "listsum (y#(IntegerVector.update ys as)) = listsum (y#(IntegerVector.update ys 0))" by (simp add: local.Cons)
-      then have "listsum (y#(IntegerVector.update ys 0)) = y + listsum (IntegerVector.update ys 0)" by simp
-      then have "y + listsum (IntegerVector.update ys 0) = y + 1 + listsum ys" by (simp add: list_update_zero)
-    qed*)
   qed
 qed
 
