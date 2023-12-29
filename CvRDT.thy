@@ -37,6 +37,6 @@ begin
     unfolding initial_def
     apply (simp add: local.merge_commutativity)
     using local.sup_absorb2 by force
-
 end
+
 end
