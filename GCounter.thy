@@ -31,7 +31,7 @@ fun less :: "GCounter => GCounter => bool" where
 
 (* list lemmas *)
 
-lemma lissum_empty: "listsum [] = 0"
+lemma listsum_empty: "listsum [] = 0"
   by auto
 
 lemma listsum_singleton: "listsum [x] = x"
@@ -55,6 +55,9 @@ lemma list_update_empty: "listsum (IntegerVector.update [] n) = 1"
   by (auto)  
 
 (* GCounter properties *)
+
+lemma counter_less_eq_initial: "\<And>x. GCounter.less_eq initial_counter x"
+  by (metis "IntVector2CvRDT.'a.bot.extremum" GCounter.inject GCounter.less_eq.elims(3) initial_counter_def)
 
 lemma initial_counter_sum_zero: "query initial_counter = 0"
   unfolding initial_counter_def
@@ -107,13 +110,15 @@ qed*)
 (* CvRDT interpretation *)
 
 interpretation GCounterCvRDT : CvRDT
+    GCounter.initial_counter
     GCounter.less_eq
     GCounter.less
     GCounter.merge
-    GCounter.initial_counter
     GCounter.query
     GCounter.update
 proof
+  show "\<And>x. GCounter.less_eq initial_counter x"
+    by (simp add: counter_less_eq_initial)
   show "\<And>x. GCounter.less_eq x x"
     using GCounter.less_eq.elims(1) by blast
   show "\<And>x y. GCounter.less x y = (GCounter.less_eq x y \<and> \<not> GCounter.less_eq y x)"

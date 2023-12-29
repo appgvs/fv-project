@@ -61,13 +61,15 @@ lemma merge_identity_left: "(e \<in> query a) = (e \<in> query (merge initial a)
 (* USet methods *)
 
 interpretation USetCvRDT : CvRDT
+    USet.initial
     USet.less_eq
     USet.less
     USet.merge
-    USet.initial
     USet.query
     USet.add
 proof
+  show "\<And>x. USet.less_eq initial x"
+    by (metis empty_subsetI initial_def less_eq.elims(3) query.simps)
   show "\<And>x. USet.less_eq x x"
     using less_eq.elims(3) by fastforce
   show "\<And>x y. USet.less x y = (USet.less_eq x y \<and> \<not> USet.less_eq y x)"

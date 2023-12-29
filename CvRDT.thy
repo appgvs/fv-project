@@ -4,15 +4,16 @@ begin
 
 (* CvRDTs, as defined by Shapiro et al. *)
 locale CvRDT =
-  "'a" : Orderings.order +                        (* partial order on S *)
+  "'a" : Orderings.order_bot +                    (* partial order on S *)
   Lattices.semilattice_sup +                      (* semilattice on S *)
-  fixes initial :: "'a"                           (* the initial state of a CvRDT*)
-    and query :: "'a => 'q"                       (* the value of a CvRDT*)
+  fixes query :: "'a => 'q"                       (* the value of a CvRDT*)
     and update :: "'a => 'u => 'a"                (* update a CvRDT's state*)
   assumes monotonicity : "less_eq a (update a u)" (* monotonic update*)
 
 context CvRDT
 begin
+
+  definition "initial = bot"
 
   fun merge :: "'a => 'a => 'a" where "merge a b = sup a b"
 
@@ -26,5 +27,16 @@ begin
 
   lemma merge_idempotency: "merge a a = a"
     by simp
+
+  lemma merge_identity_right: "merge a initial = a"
+    unfolding initial_def
+    apply (auto)
+    by (metis "'a.bot_least" local.sup.orderE)
+
+  lemma merge_identity_left: "merge initial a = a"
+    unfolding initial_def
+    apply (simp add: local.merge_commutativity)
+    using local.sup_absorb2 by force
+
 end
 end

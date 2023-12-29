@@ -73,13 +73,15 @@ lemma less_eq_reflexive: "less_eq x x"
 
 (* Interpretation of PNSet as a CvRDT *)
 interpretation PNSetCvRDT : CvRDT
+    PNSet.initial
     PNSet.less_eq
     PNSet.less
     PNSet.merge
-    PNSet.initial
     PNSet.query
     PNSet.update
 proof
+    show "\<And>x. PNSet.less_eq initial x"
+      by (metis PNSet.exhaust empty_subsetI initial_def less_eq.simps)
     show "\<And>x. PNSet.less_eq x x"
       using less_eq.elims(3) by fastforce
     show "\<And>x y. PNSet.less x y = (PNSet.less_eq x y \<and> \<not> PNSet.less_eq y x)"

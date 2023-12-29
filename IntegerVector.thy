@@ -35,6 +35,10 @@ fun less :: "IntegerVector => IntegerVector => bool" where
     "less (x#xs) (y#ys) = (((x < y) & less_eq xs ys) | ((x = y) & less xs ys))"
 
 (* Partial order properties *)
+lemma less_eq_empty: "less_eq initial x"
+  unfolding initial_def
+  by (auto)
+
 lemma less_eq_reflexive : "less_eq x x"
   apply (induct x)
   apply (auto)
@@ -252,13 +256,15 @@ proof (induct a arbitrary: u)
 qed
 
 interpretation IntVector2CvRDT : CvRDT
+  IntegerVector.initial
   IntegerVector.less_eq
   IntegerVector.less
   IntegerVector.merge
-  IntegerVector.initial
   IntegerVector.query
   IntegerVector.update
 proof
+    show "\<And>x. IntegerVector.less_eq initial x"
+      by (simp add: less_eq_empty)
     show "\<And>x. IntegerVector.less_eq x x"
       by (simp add: less_eq_reflexive)
     show "\<And>x y. IntegerVector.less x y = (IntegerVector.less_eq x y \<and> \<not> IntegerVector.less_eq y x)"

@@ -38,13 +38,15 @@ fun union :: "'event Log => 'event Log => 'event Log" where
 
 
 interpretation LogCvRDT : CvRDT
+  Log.initial
   Log.subset_eq
   Log.subset
   Log.union
-  Log.initial
   Log.elements
   Log.update
 proof
+  show "\<And>x. Log.subset_eq initial x"
+    by (metis Log.inject bot.extremum initial_def subset_eq.elims(1))
   show "\<And>x. Log.subset_eq x x"
     using subset_eq.elims(3) by auto
   show "\<And>x y. Log.subset x y = (Log.subset_eq x y \<and> \<not> Log.subset_eq y x)"
