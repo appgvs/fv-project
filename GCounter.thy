@@ -37,6 +37,10 @@ lemma listsum_empty: "listsum [] = 0"
 lemma listsum_singleton: "listsum [x] = x"
   by auto
 
+lemma update_singleton: "listsum (IntegerVector.update [] b) = 1"
+  apply (induct b)
+  by auto
+
 lemma listsum_head: "listsum (x # xs) = x + listsum xs"
   apply (induct xs)
   by (auto)
@@ -54,6 +58,16 @@ lemma list_update_zero: "listsum (IntegerVector.update x 0) = 1 + listsum x"
   apply (induct x)
   by (auto)
 
+lemma listsum_pos: "listsum (IntegerVector.update xs a) = listsum (IntegerVector.update xs b)"
+  apply (induct xs)
+  apply (induct a)
+  apply (auto)
+  apply (induct b)
+  apply (auto)
+  apply (simp add: update_singleton)
+  
+  sorry
+
 lemma listsum_update: "listsum (x # (IntegerVector.update xs n)) = listsum (IntegerVector.update (x#xs) n)"
 proof (induct n)
   case 0
@@ -64,7 +78,7 @@ proof (induct n)
 next
   case (Suc n)
   then show ?case
-    sorry
+    by (metis listsum_head listsum_pos)
 qed
 
 lemma list_update_empty: "listsum (IntegerVector.update [] n) = 1"
