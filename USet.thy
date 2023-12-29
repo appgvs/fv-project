@@ -48,6 +48,16 @@ lemma merge_creates_no_item: "\<not> e \<in> query a \<and> \<not> e \<in> query
   apply (induct b)
   by auto
 
+lemma merge_identity_right: "e \<in> query a ==> e \<in> query (merge a initial)"
+  unfolding initial_def
+  apply (induct a)
+  by auto
+
+lemma merge_identity_left: "e \<in> query a ==> e \<in> query (merge initial a)"
+  unfolding initial_def
+  apply (induct a)
+  by auto
+
 (* USet methods *)
 
 interpretation USetCvRDT : CvRDT
