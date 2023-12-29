@@ -27,6 +27,10 @@ lemma query_contains_add: "e \<in> query (add s e)"
   apply (induct s)
   by auto
 
+lemma add_creates_no_item: "\<not> a \<in> (query s) & \<not> (a = b) ==> \<not> a \<in> (query (add s b))"
+  apply (induct s)
+  by auto
+
 lemma initial_contains_nothing: "\<not> e \<in> (query initial)"
   by (simp add: initial_def)
 
@@ -35,6 +39,11 @@ lemma updated_preserves_items: "e \<in> query s ==> e \<in> query (add s a)"
   by auto
 
 lemma merge_preserves_items: "e \<in> query a \<Longrightarrow> e \<in> query (merge a b)"
+  apply (induct a)
+  apply (induct b)
+  by auto
+
+lemma merge_creates_no_item: "\<not> e \<in> query a \<and> \<not> e \<in> query b \<Longrightarrow> \<not> e \<in> query (merge a b)"
   apply (induct a)
   apply (induct b)
   by auto
