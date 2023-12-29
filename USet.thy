@@ -19,7 +19,7 @@ fun less :: "'a USet => 'a USet => bool" where
     "less (USet s1) (USet s2) = Set.subset s1 s2"
 
 fun merge :: "'a USet => 'a USet => 'a USet" where
-    "merge (USet s1) (USet s2) = USet (Set.union s1 s2)"
+    "merge (USet s1) (USet s2) = USet (s1 \<union> s2)"
 
 (* USet properties *)
 
@@ -58,6 +58,53 @@ lemma merge_identity_left: "(e \<in> query a) = (e \<in> query (merge initial a)
   apply (induct a)
   by auto
 
+(* CvRDT properties *)
+
+lemma less_eq_empty: "less_eq initial x"
+  unfolding initial_def
+  apply (induct x)
+  by auto
+
+lemma less_eq_reflexive: "less_eq x x"
+  apply (induct x)
+  by auto
+
+lemma less_comb: "less x y = (less_eq x y & (~ less_eq y x))"
+  apply (induct x)
+  apply (induct y)
+  by auto
+
+lemma less_eq_transitive: "less_eq x y ==> less_eq y z ==> less_eq x z"
+  apply (induct x)
+  apply (induct y)
+  apply (induct z)
+  by auto
+
+lemma less_eq_eq: "less_eq x y ==> less_eq y x ==> x = y"
+  apply (induct x)
+  apply (induct y)
+  by auto
+
+lemma less_eq_merge_left: "less_eq x (merge x y)"
+  apply (induct x)
+  apply (induct y)
+  by auto
+
+lemma less_eq_merge_right: "less_eq y (merge x y)"
+  apply (induct x)
+  apply (induct y)
+  by auto
+
+lemma less_eq_merge_count: "less_eq a c ==> less_eq b c ==> less_eq (merge a b) c"
+  apply (induct a)
+  apply (induct b)
+  apply (induct c)
+  by auto
+
+lemma less_eq_add_monotonic: "less_eq a (add a u)"
+  apply (induct a)
+  by auto
+
 (* USet methods *)
 
 interpretation USetCvRDT : CvRDT
@@ -69,29 +116,28 @@ interpretation USetCvRDT : CvRDT
     USet.add
 proof
   show "\<And>x. USet.less_eq initial x"
-    by (metis empty_subsetI initial_def less_eq.elims(3) query.simps)
+    by (simp add:less_eq_empty)
   show "\<And>x. USet.less_eq x x"
-    using less_eq.elims(3) by fastforce
+    by (simp add:less_eq_reflexive)
   show "\<And>x y. USet.less x y = (USet.less_eq x y \<and> \<not> USet.less_eq y x)"
-    by (metis query.elims psubsetE psubsetI less.simps less_eq.simps)
+    by (simp add:less_comb)
   show "\<And>x y z.
        USet.less_eq x y \<Longrightarrow>
        USet.less_eq y z \<Longrightarrow> USet.less_eq x z"
-    by (metis USet.inject subset_eq less_eq.elims(2) less_eq.elims(3))
-  show "\<And>x y. USet.less_eq x y \<Longrightarrow>
-           USet.less_eq y x \<Longrightarrow> x = y"
-    using less_eq.elims(2) by fastforce
+    by (simp add:less_eq_transitive)
+  show "\<And>x y. USet.less_eq x y \<Longrightarrow> USet.less_eq y x \<Longrightarrow> x = y"
+    by (simp add:less_eq_eq)
   show "\<And>x y. USet.less_eq x (USet.merge x y)"
-    by (metis USet.exhaust Un_commute inf_sup_ord(4) less_eq.simps merge.simps)
+    by (simp add:less_eq_merge_left)
   show  "\<And>y x. USet.less_eq y (USet.merge x y)"
-    by (metis query.simps inf_sup_ord(4) less_eq.elims(3) merge.elims)
+    by (simp add:less_eq_merge_right)
   show "\<And>y x z.
        USet.less_eq y x \<Longrightarrow>
        USet.less_eq z x \<Longrightarrow>
        USet.less_eq (USet.merge y z) x"
-    by (smt (verit, ccfv_threshold) query.simps le_sup_iff less_eq.elims(2) less_eq.elims(3) merge.elims)
+    by (simp add:less_eq_merge_count)
   show "\<And>a u. USet.less_eq a (add a u)"
-    using less_eq.elims(3) by fastforce
+    by (simp add:less_eq_add_monotonic)
 qed
 
 end
