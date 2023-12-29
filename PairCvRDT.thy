@@ -1,5 +1,5 @@
 theory PairCvRDT
-    imports Main CvRDT
+    imports Main CvRDT HOL.Orderings
 begin
 
 locale PairCvRDT =
@@ -37,8 +37,8 @@ begin
     fun less :: "('a1 \<times> 'a2) => ('a1 \<times> 'a2) => bool" where
         "less (a, b) (x, y) = ((less1 a x & less_eq2 b y) | (less_eq1 a x & less2 b y))"
 
-    fun sup :: "('a1 \<times> 'a2) => ('a1 \<times> 'a2) => ('a1 \<times> 'a2)" where
-        "sup (a, b) (x, y) = (sup1 a x, sup2 b y)"
+    fun merge :: "('a1 \<times> 'a2) => ('a1 \<times> 'a2) => ('a1 \<times> 'a2)" where
+        "merge (a, b) (x, y) = (sup1 a x, sup2 b y)"
 
     fun query :: "('a1 \<times> 'a2) => ('q1 \<times> 'q2)" where
         "query (a, b) = (query1 a, query2 b)"
@@ -47,8 +47,24 @@ begin
         "update (a, b) (Update1 u) = (update1 a u, b)" |
         "update (a, b) (Update2 u) = (a, update2 b u)"
 
+(*lemma less_eq1_reflexivity: "\<And>a b. x = (a, b) \<Longrightarrow> less_eq1 a a"
+    using CvRDT_def[of bot1 less_eq1 less1 sup1 update1] assms(1)
+    by (simp add: order.refl)*)
+
+    lemma less_eq_reflexive: "less_eq x x"
+        apply (cases x)
+        apply (auto)
+        using CvRDT_def[of bot1 less_eq1 less1 sup1 update1]
+        using CvRDT_def[of bot2 less_eq2 less2 sup2 update2]
+      proof -
+        show "\<And>a b. x = (a, b) \<Longrightarrow> less_eq1 a a"
+          
+        show "\<And>a b. x = (a, b) \<Longrightarrow> less_eq2 b b"
+          sorry
+      qed
+
     interpretation PairCvRDTCvRDT : CvRDT
-        bot less_eq less sup query update
+        bot less_eq less merge query update
         apply unfold_locales
     proof
         

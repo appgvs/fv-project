@@ -37,6 +37,10 @@ lemma listsum_empty: "listsum [] = 0"
 lemma listsum_singleton: "listsum [x] = x"
   by auto
 
+lemma listsum_head: "listsum (x # xs) = x + listsum xs"
+  apply (induct xs)
+  by (auto)
+
 lemma listsum_append: "listsum (xs @ ys) = listsum xs + listsum ys"
   apply (induct xs)
   apply (induct ys)
@@ -50,6 +54,19 @@ lemma list_update_zero: "listsum (IntegerVector.update x 0) = 1 + listsum x"
   apply (induct x)
   by (auto)
 
+lemma listsum_update: "listsum (x # (IntegerVector.update xs n)) = listsum (IntegerVector.update (x#xs) n)"
+proof (induct n)
+  case 0
+  then show ?case
+    apply (auto)
+    apply (induct xs)
+    by (auto)
+next
+  case (Suc n)
+  then show ?case
+    sorry
+qed
+
 lemma list_update_empty: "listsum (IntegerVector.update [] n) = 1"
   apply (induct n)
   by (auto)  
@@ -57,21 +74,44 @@ lemma list_update_empty: "listsum (IntegerVector.update [] n) = 1"
 (* GCounter properties *)
 
 lemma counter_less_eq_initial: "\<And>x. GCounter.less_eq initial_counter x"
-  by (metis "IntVector2CvRDT.'a.bot.extremum" GCounter.inject GCounter.less_eq.elims(3) initial_counter_def)
+  unfolding initial_counter_def initial_def
+  using GCounter.less_eq.elims(3) by fastforce
 
 lemma initial_counter_sum_zero: "query initial_counter = 0"
-  unfolding initial_counter_def
-  apply (auto)
-  unfolding initial_def
+  unfolding initial_counter_def initial_def
   by auto
 
 lemma update_listsum_suc: "listsum (IntegerVector.update xa m) = Suc (listsum xa) \<Longrightarrow> listsum (IntegerVector.update (a # xa) (Suc m)) = Suc (a + listsum xa)"
   by auto
 
-lemma update_empty: "listsum (IntegerVector.update [] n) = 1"
-  apply (auto)
+lemma update_empty: "listsum (IntegerVector.update [] n) = Suc 0"
   apply (induct n)
   by auto
+
+lemma increment_adds_one: "query (increment x n) = 1 + (query x)"
+proof (induct x arbitrary: n)
+  case (GCounter vec)
+  then show ?case
+    apply (auto)
+    proof (induct vec)
+    case Nil
+      then show ?case
+        apply (induct n)
+        apply (auto)
+        done
+    next
+    case (Cons x xs)
+      then show ?case
+        proof -
+          assume a: "listsum (IntegerVector.update xs n) = Suc (listsum xs)"
+          then have "x + listsum (IntegerVector.update xs n) = x + Suc (listsum xs)" by simp
+          then have "x + listsum (IntegerVector.update xs n) = Suc (x + listsum xs)" by simp
+          then have "listsum (x # (IntegerVector.update xs n)) = Suc (listsum (x # xs))" by simp
+          then have res: "listsum (IntegerVector.update (x # xs) n) = Suc (listsum (x # xs))" by (metis listsum_update)
+          from a res show "listsum (IntegerVector.update (x # xs) n) = Suc (listsum (x # xs))" by auto
+      qed
+    qed
+  qed
 
 
 (*lemma increment_adds_one_zo_sum: "query (increment x n) = 1 + (query x)"
