@@ -28,12 +28,12 @@ begin
   lemma merge_idempotency: "merge a a = a"
     by simp
 
-  lemma merge_identity_right: "merge a initial = a"
+  lemma merge_initial_right: "merge a initial = a"
     unfolding initial_def
     apply (auto)
     by (metis "'a.bot_least" local.sup.orderE)
 
-  lemma merge_identity_left: "merge initial a = a"
+  lemma merge_initial_left: "merge initial a = a"
     unfolding initial_def
     apply (simp add: local.merge_commutativity)
     using local.sup_absorb2 by force
