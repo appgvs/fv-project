@@ -145,13 +145,6 @@ case (Cons x xs)
 then show ?case by (metis IntegerVector.update.simps(4) diff_Suc_1 listsum_pos)
 qed
 
-lemma "listsum (y # (IntegerVector.update ys n)) = listsum (IntegerVector.update (y#ys) n)"
-proof -
-(*listsum (y # IntegerVector.update ys n) = listsum (IntegerVector.update (y # ys) n)*)
-have forward: "listsum (y # IntegerVector.update ys n) = y + listsum (IntegerVector.update ys n)" by (metis listsum_head)
-
-oops
-
 lemma list_update_any: "listsum (IntegerVector.update x n) = 1 + listsum x"
 proof (induct x arbitrary: n)
 case Nil
@@ -236,39 +229,6 @@ proof (induct x arbitrary: n)
       qed
     qed
   qed
-
-
-(*lemma increment_adds_one_zo_sum: "query (increment x n) = 1 + (query x)"
-proof (induct x arbitrary: n)
-  case (GCounter xa)
-  then show ?case
-    apply (auto)
-    proof (induct xa)
-      case Nil
-      then show ?case
-        apply(auto)
-      proof (induct n)
-        case 0
-        then show ?case by auto
-      next
-        case (Suc m)
-        then show ?case by auto
-      qed
-    next
-      case (Cons a xa)
-      then show ?case
-        apply(auto)
-      proof (induct n)
-        case 0
-        then show ?case
-          by auto
-      next
-        case (Suc m)
-        then show ?case
-          sorry
-      qed
-    qed
-qed*)
   
 
 (* CvRDT interpretation *)
