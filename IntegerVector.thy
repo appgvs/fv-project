@@ -37,12 +37,11 @@ fun less :: "IntegerVector => IntegerVector => bool" where
 (* Partial order properties *)
 lemma less_eq_empty: "less_eq initial x"
   unfolding initial_def
-  by (auto)
+  by auto
 
 lemma less_eq_reflexive : "less_eq x x"
   apply (induct x)
-  apply (auto)
-  done
+  by auto
 
 lemma less_eq_antisymmetry: "less_eq x y \<Longrightarrow> less_eq y x \<Longrightarrow> x = y"
 proof (induct x arbitrary: y)
@@ -52,17 +51,8 @@ proof (induct x arbitrary: y)
 next
   case (Cons x xs)
   then show ?case
-  proof (induct y)
-    case Nil
-    then show ?case
-      apply(auto)
-      done
-  next
-    case (Cons y ys)
-    then show ?case
-      apply(auto)
-      done
-  qed
+    apply (induct y)
+    by auto
 qed
 
 lemma less_eq_transitive: "less_eq x y \<Longrightarrow> less_eq y z \<Longrightarrow> less_eq x z"
@@ -143,34 +133,23 @@ qed
 
 lemma merge_empty_left : "merge [] y = y"
   apply (induct y)
-  apply (auto)
-  done
+  by auto
 
 lemma merge_empty_right : "merge x [] = x"
   apply (induct x)
-  apply (auto)
-  done
+  by auto
 
 lemma merge_commutativity : "merge x y  = merge y x"
 proof (induct x arbitrary: y)
   case Nil
   then show ?case
     apply (auto)
-    apply (simp add: merge_empty_left)
-    done
+    by (simp add: merge_empty_left)
 next
   case (Cons a as)
   then show ?case
-  proof (induct y)
-    case Nil
-    then show ?case
-      apply (auto)
-      done
-    case (Cons b bs)
-    then show ?case
-      apply (auto)
-      done
-  qed
+    apply (induct y)
+    by auto
 qed
 
 lemma less_eq_merge_right: "less_eq y (merge x y)"
@@ -181,9 +160,8 @@ proof -
 qed
 
 lemma merge_takes_greater: "merge (x#xs) (y#ys) = (if x > y then x#(merge xs ys) else y#(merge xs ys))"
-  apply(induct x)
-  apply (auto)
-  done
+  apply (induct x)
+  by auto
 
 lemma less_eq_non_empty:
   assumes "less_eq (x#xs) c"
@@ -215,22 +193,12 @@ next
   then show ?case
   proof (induct b)
     case Nil
-    then show ?case
-      apply (auto)
-      done
+    then show ?case by auto
   next
     case (Cons y ys)
     then show ?case
-    proof (induct c)
-      case Nil
-      then show ?case
-        apply (auto)
-        done
-    next
-      case (Cons z zs)
-      then show ?case
-        by simp
-    qed
+      apply (induct c)
+      by auto
   qed
 qed
 
