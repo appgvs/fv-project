@@ -77,6 +77,15 @@ fun mapToEvents :: "'a LogEvent list => 'a list" where
   "mapToEvents [] = []" |
   "mapToEvents ((e, _)#xs) = e # (mapToEvents xs)"
 
+lemma contains_mapToEvents : "contains (e, ts) l \<Longrightarrow> contains e (mapToEvents l)"
+  apply (induct l arbitrary: e ts)
+  by auto
+
+lemma contains_mapToEvents_exists: "contains e (mapToEvents l) \<Longrightarrow> \<exists>ts. contains (e, ts) l"
+  apply (induct l arbitrary: e)
+  apply auto[1]
+  by fastforce
+
 fun query :: "'a::linorder Log \<Rightarrow> 'a list" where
     "query s1 = mapToEvents (insort (set_to_list (USet.query s1)))"
 
