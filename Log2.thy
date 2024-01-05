@@ -57,6 +57,22 @@ fun insort :: "'a::linorder LogEvent list => 'a LogEvent list" where
   "insort [x] = [x]" |
   "insort (x#xs) = insort1 x (insort xs)"
 
+fun contains :: "'a \<Rightarrow> 'a list \<Rightarrow> bool" where
+  "contains _ [] = False" |
+  "contains e (x#xs) = (e = x | contains e xs)"
+
+lemma contains_tail : "contains e xs \<Longrightarrow>  contains e (x#xs)" by auto
+
+lemma contains_head_or_tail: "contains e (x#xs) \<Longrightarrow> (e = x | contains e xs)" by auto
+
+lemma contains_insort1_elem: "contains e (insort1 e l)"
+  apply (induct l arbitrary: e)
+  by auto
+
+lemma contains_insort1_list: "contains e l \<Longrightarrow> contains e (insort1 a l)"
+  apply (induct l arbitrary: e a)
+  by auto
+
 fun mapToEvents :: "'a LogEvent list => 'a list" where
   "mapToEvents [] = []" |
   "mapToEvents ((e, _)#xs) = e # (mapToEvents xs)"
