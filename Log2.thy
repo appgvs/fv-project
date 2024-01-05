@@ -1,5 +1,8 @@
 theory Log2
-    imports CvRDT USet HOL.List
+  imports
+    CvRDT
+    USet
+    HOL.List
 begin
 
 (* Datatypes definitions. *)
@@ -15,15 +18,54 @@ fun max_timestamp :: "'a Log => nat" where
     "max_timestamp s = Max (snd ` (USet.query s))"
 
 fun insert :: "'a Log => 'a LogUpdate => 'a Log" where
-    "insert log e = USet.add log (e, max_timestamp log + 1)"
+    "insert l e = USet.add l (e, max_timestamp l + 1)"
 
 fun merge :: "'a Log => 'a Log => 'a Log" where
     "merge s1 s2 = USet.merge s1 s2"
 
-fun query :: "'a Log \<Rightarrow> 'a Log" where
-    "query s1 = s1"
+definition set_to_list :: "'a set \<Rightarrow> 'a list"
+  where "set_to_list s = (SOME l. set l = s)"
+
+lemma set_set_to_list: "finite s \<Longrightarrow> set (set_to_list s) = s"
+  by (metis (mono_tags, lifting) finite_list set_to_list_def someI)
+
+fun less_event :: "('a::linorder) LogEvent => 'a LogEvent => bool" where
+  "less_event (e1, ts1) (e2, ts2) = (ts1 < ts2 | (ts1 = ts2 & (e1 < e2)))"
+
+fun less_eq_event :: "'a::linorder LogEvent => 'a LogEvent => bool" where
+  "less_eq_event (e1,ts1) (e2, ts2) = (ts1 < ts2 | (ts1 = ts2 & (e1 < e2)) | (e1 = e2 & ts1 = ts2))"
+
+(*
+interpretation Log2Event: Orderings.linorder
+  less_eq_event
+  less_event
+proof
+  show "\<And>x y. less_event x y = (less_eq_event x y \<and> \<not> less_eq_event y x)" by auto
+  show "\<And>x. less_eq_event x x" by auto
+  show "\<And>x y z. less_eq_event x y \<Longrightarrow> less_eq_event y z \<Longrightarrow> less_eq_event x z" by auto
+  show "\<And>x y. less_eq_event x y \<Longrightarrow> less_eq_event y x \<Longrightarrow> x = y" by auto
+  show "\<And>x y. less_eq_event x y \<or> less_eq_event y x" by auto
+qed
+*)
+
+fun insort1 :: "'a::linorder LogEvent => 'a LogEvent list => 'a LogEvent list" where
+  "insort1 x [] = [x]" |
+  "insort1 x (y#ys) = (if less_eq_event x y then x#y#ys else y#(insort1 x ys))"
+
+fun insort :: "'a::linorder LogEvent list => 'a LogEvent list" where
+  "insort [] = []" |
+  "insort [x] = [x]" |
+  "insort (x#xs) = insort1 x (insort xs)"
+
+fun mapToEvents :: "'a LogEvent list => 'a list" where
+  "mapToEvents [] = []" |
+  "mapToEvents ((e, _)#xs) = e # (mapToEvents xs)"
+
+fun query :: "'a::linorder Log \<Rightarrow> 'a list" where
+    "query s1 = mapToEvents (insort (set_to_list (USet.query s1)))"
 
 (* Log partial order *)
+
 fun less_eq :: "'a Log => 'a Log => bool" where
     "less_eq s1 s2 = USet.less_eq s1 s2"
 
@@ -74,6 +116,6 @@ proof
   show "\<And>y x. Log2.less_eq y (Log2.merge x y)" by (metis less_eq_merge_right)
   show "\<And>y x z. Log2.less_eq y x \<Longrightarrow> Log2.less_eq z x \<Longrightarrow> Log2.less_eq (Log2.merge y z) x" by (metis less_eq_comb)
   show "\<And>a u. Log2.less_eq a (Log2.insert a u)" by (metis insert_monotonic)
-  oops
+qed
 
 end
