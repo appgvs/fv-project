@@ -1,0 +1,9 @@
+.bsp
+.bloop
+.idea
+.scala-build
+.stainless-cache
+.metals
+project/
+target/
+.vscode
