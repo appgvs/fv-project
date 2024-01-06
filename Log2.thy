@@ -73,6 +73,60 @@ lemma contains_insort1_list: "contains e l \<Longrightarrow> contains e (insort1
   apply (induct l arbitrary: e a)
   by auto
 
+lemma contains_insort1_backward: "contains e (insort1 a l) \<Longrightarrow> (a = e | contains e l)"
+  apply (induct l arbitrary: e a)
+  apply simp
+  by (metis contains.simps(2) insort1.simps(2))
+
+lemma contains_insort_forward: "contains e l \<Longrightarrow> contains e (insort l)"
+  apply (induct l arbitrary: e)
+  apply (simp)
+  by (metis contains.simps(2) contains_insort1_elem contains_insort1_list insort.simps(2) insort.simps(3) list.exhaust)
+
+lemma contains_none: "~ contains e (x#xs) \<Longrightarrow> ~ contains e xs"
+  by simp
+
+lemma contains_insort_none: "~ contains e (insort (x#xs)) \<Longrightarrow> ~ contains e (insort xs)"
+  by (metis contains.elims(3) contains.simps(2) contains_insort1_list contains_insort_forward insort.simps(1) insort.simps(3))
+
+lemma contains_insort_same: "~ contains e (insort xs) \<Longrightarrow> ~ contains e xs"
+  using contains_insort_forward by blast
+
+lemma contains_t1: "\<not> contains e (a # xs) \<Longrightarrow> (~ (e=a) & ~ contains e xs)"
+  by auto
+
+lemma contains_t2: "(~ contains e (insort xs) & ~ (x = e)) \<Longrightarrow> (~ contains e (insort (x#xs)))"
+  apply auto
+  apply (induct xs arbitrary: x e)
+  apply simp
+  by (metis contains_insort1_backward insort.simps(3))
+
+lemma contains_insort_same2: "~ contains e xs \<Longrightarrow> ~ contains e (insort xs)"
+  apply (induct xs arbitrary: e)
+  apply (simp)
+  by (metis contains.simps(2) contains_t2)
+
+lemma contains_insort_head_or_tail: "contains (e, ts) (insort (x#xs)) ==> ((e, ts) = x | contains (e,ts) (insort xs))"
+  apply (auto)
+  apply (cases xs)
+  apply (simp)
+  by (metis contains_t2)
+
+lemma contains_insort_backward: "contains e (insort l) \<Longrightarrow> contains e l"
+proof (induct l arbitrary: e)
+  case Nil
+  then show ?case by simp
+next
+  case (Cons x xs)
+  then show ?case
+    apply (auto)
+    by (metis contains_insort_head_or_tail prod.exhaust)
+qed
+
+
+lemma contains_insort: "contains e l = contains e (insort l)"
+  using contains_insort_backward contains_insort_forward by blast
+
 fun mapToEvents :: "'a LogEvent list => 'a list" where
   "mapToEvents [] = []" |
   "mapToEvents ((e, _)#xs) = e # (mapToEvents xs)"
@@ -86,8 +140,8 @@ lemma contains_mapToEvents_exists: "contains e (mapToEvents l) \<Longrightarrow>
   apply auto[1]
   by fastforce
 
-fun query :: "'a::linorder Log \<Rightarrow> 'a list" where
-    "query s1 = mapToEvents (insort (set_to_list (USet.query s1)))"
+fun query :: "'a::linorder Log \<Rightarrow> ('a LogEvent) list" where
+    "query s1 =  insort (set_to_list (USet.query s1))"
 
 (* Log partial order *)
 
@@ -96,6 +150,11 @@ fun less_eq :: "'a Log => 'a Log => bool" where
 
 fun less :: "'a Log => 'a Log => bool" where
     "less s1 s2 = USet.less s1 s2"
+
+(* Log properties *)
+lemma query_preserves_inserts: "\<exists>ts::nat. contains (a, ts) (query (insert l a))"
+  apply (auto)
+  sorry
 
 (* CvRDT proofs *)
 
