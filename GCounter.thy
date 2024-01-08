@@ -107,7 +107,7 @@ interpretation GCounterCvRDT : CvRDT
     GCounter.less
     GCounter.merge
     GCounter.query
-    GCounter.update
+    GCounter.increment
 proof
   show "\<And>x. GCounter.less_eq initial_counter x"
     by (simp add: counter_less_eq_initial)
@@ -125,8 +125,8 @@ proof
     by (metis GCounter.exhaust GCounter.merge.simps \<open>\<And>y x. GCounter.less_eq x (GCounter.merge x y)\<close> merge_commutativity)
   show "\<And>y x z. GCounter.less_eq y x \<Longrightarrow> GCounter.less_eq z x \<Longrightarrow> GCounter.less_eq (GCounter.merge y z) x"
     by (smt (verit, ccfv_SIG) GCounter.exhaust GCounter.less_eq.simps GCounter.merge.simps IntVector2CvRDT.le_sup_iff)
-  show "\<And>a u. GCounter.less_eq a (GCounter.update a u)"
-    by (metis GCounter.less_eq.simps GCounter.update.elims update_monotonicity)    
+  show "\<And>a u. GCounter.less_eq a (GCounter.increment a u)"
+    by (metis GCounter.less_eq.simps GCounter.query.cases GCounter.update.simps increment.elims update_monotonicity)
 qed
 
 end
