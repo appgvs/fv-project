@@ -37,6 +37,10 @@ fun less :: "'a PNSet => 'a PNSet => bool" where
 
 (* PNSet properties *)
 
+lemma add_preservation: "e \<in> query s \<Longrightarrow> e \<in> (query (add s a))"
+  apply (induct s arbitrary: e a)
+  by simp
+
 lemma add_creates_no_item: "\<not> a \<in> (query s) & \<not> (a = b) ==> \<not> a \<in> (query (add s b))"
   apply (induct s)
   by auto
