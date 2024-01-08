@@ -1,5 +1,7 @@
 # Formally Verified Conflict-Free Replicated Data Types
 
+**Class**: CS-550, Formal Verification [(EPFL Website)](https://edu.epfl.ch/coursebook/en/formal-verification-CS-550)
+
 ## Team
 
 | Name | Email |
