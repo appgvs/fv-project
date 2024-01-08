@@ -8,6 +8,7 @@ This project uses the Isabelle/HOL proof assistant. The project can be run
 as follows:
 
 ```bash
+# Builds and checks the theories
 isabelle build -D . CRDT
 
 # Generates the browser info
