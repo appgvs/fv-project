@@ -2,7 +2,7 @@ import scala.util.Random
 import GCounter.*
 
 class TestGCounter extends munit.FunSuite {
-  private val MAX_VECTOR_SIZE = 4
+  private val MAX_VECTOR_SIZE = 20
 
   test("GCounter simple increment test") {
     val trace = (v => increment(v, intToNat(0))) :: Nil
