@@ -28,6 +28,7 @@ Here's a short rundown of the files from this repository:
 + Vector-based CvRDTs theories:
   - [IntegerVector](IntegerVector.thy); and
   - [GCounter](GCounter.thy).
++ The generated Scala code can be found in the [scala](scala) folder.
 + Work-in-progress theories are available in the [wip](wip) folder.
 
 ## Team

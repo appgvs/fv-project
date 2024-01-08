@@ -7,8 +7,6 @@ theories
     GCounter
     IntegerVector
     Log
-    Log2
-    PairCvRDT
     PNSet
     USet
 document_files "root.tex"

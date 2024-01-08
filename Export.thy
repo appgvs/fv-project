@@ -12,7 +12,7 @@ begin
 export_code
   "USet" "USet.initial" "USet.add" "USet.query" "USet.merge"
   "PNSet" "PNSet.initial" "PNSet.add" "PNSet.remove" "PNSet.query" "PNSet.merge"
-  "Log" "Log.initial" "Log.update" "Log.elements" "Log.union"
+  "Log.initial_log" "Log.insert" "Log.merge"
   "IntegerVector.query" "IntegerVector.merge" "IntegerVector.update"
   "GCounter" "GCounter.initial_counter" "GCounter.query" "GCounter.merge" "GCounter.increment"
 in Scala
