@@ -2,14 +2,6 @@
 
 **Class**: CS-550, Formal Verification [(EPFL Website)](https://edu.epfl.ch/coursebook/en/formal-verification-CS-550)
 
-## Team
-
-| Name | Email |
-|---|---|
-| Alexandre Piveteau | alexandre.piveteau@epfl.ch |
-| Patrick Gilliard | patrick.gilliard@epfl.ch |
-| Victor Schneuwly | victor.schneuwly@epfl.ch |
-
 ## Setup
 
 This project uses the Isabelle/HOL proof assistant. The project can be run
@@ -37,3 +29,11 @@ Here's a short rundown of the files from this repository:
   - [IntegerVector](IntegerVector.thy); and
   - [GCounter](GCounter.thy).
 + Work-in-progress theories are available in the [wip](wip) folder.
+
+## Team
+
+| Name | Email |
+|---|---|
+| Alexandre Piveteau | alexandre.piveteau@epfl.ch |
+| Patrick Gilliard | patrick.gilliard@epfl.ch |
+| Victor Schneuwly | victor.schneuwly@epfl.ch |
